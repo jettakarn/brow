@@ -12,6 +12,7 @@ A native Dynamic Island–style peninsula for GNOME Shell on Wayland. Built as a
   - **Charging** (green) when power is connected
   - **Low battery** (red) when level drops to **20%** or below while discharging (once per drop; resets after charging above 20%)
 - **Volume HUD** — when system output volume changes, the island expands into an Apple-style bar (icon + “Volume” + thin level track); drag the track to set volume; holds ~2.5s then returns
+- **HUD priority queue** — fingerprint auth > volume > battery; a higher overlay preempts a lower one, and a preempted timed HUD resumes if it has not expired (auth clears timed HUDs)
 - **Experimental: fingerprint auth island** — when fprintd starts verification (lock unlock / Settings test), the island morphs into a rounded square with a mint scan frame, breathing green rim/edge, and fingerprint; success spins to a check, failure shakes; falls back to the default island on password / session end
 - **Shortcuts** — four app chips; short-press launches, long-press reassigns from installed apps
 - **In-island settings** — temperature unit, 12/24h clock
@@ -61,8 +62,8 @@ Then **log out and log in** (or restart GNOME Shell on Xorg with Alt+F2 → `r`)
 | Scroll / swipe while expanded | Cycle tabs (wraps around) |
 | Plug in power | **Charging** banner (~3s), then default island |
 | Battery ≤ 20% (on battery) | **Low Battery** banner (~3s), then default island |
-| Volume up / down / mute | **Volume** HUD (~2.5s); drag the bar to set level |
-| Fingerprint verify (lock / Settings) | Experimental square scan → check or shake |
+| Volume up / down / mute | **Volume** HUD (~2.5s); preempts battery banner if showing; drag the bar to set level |
+| Fingerprint verify (lock / Settings) | Experimental square scan → check or shake (clears volume/battery HUDs) |
 | Media → output icon | Opens **Settings → Sound** |
 | Media → transport | `playerctl` previous / play-pause / next |
 | Shortcuts → short-press | Launch assigned app |
@@ -84,6 +85,7 @@ islet-gnome-extension/
     media.js            # playerctl, art, media card UI + spectrum + progress
     batteryBannerUi.js  # Charging / low-battery peninsula banners
     volumeHudUi.js      # Apple-style volume HUD + drag-to-set
+    hudQueue.js         # Priority queue: auth > volume > battery
     fingerprintAuth.js  # Passive fprintd Verify* monitor (experimental)
     fingerprintUi.js    # Auth square overlay + animations
     shortcutsUi.js      # Customizable shortcut chips + in-island app picker

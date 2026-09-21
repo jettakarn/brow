@@ -34,6 +34,7 @@ import { MediaController } from './lib/media.js';
 import { buildSettingsTab, syncSettingsUi } from './lib/settingsUi.js';
 import { buildBatteryBanner } from './lib/batteryBannerUi.js';
 import { buildVolumeHud } from './lib/volumeHudUi.js';
+import { createHudQueue, HudKind } from './lib/hudQueue.js';
 import { FingerprintAuthMonitor } from './lib/fingerprintAuth.js';
 import { buildFingerprintUi } from './lib/fingerprintUi.js';
 import {
@@ -68,14 +69,17 @@ export default class IsletExtension extends Extension {
         this._soup = new Soup.Session();
         this._media = new MediaController(this);
         this._isBatteryBanner = false;
-        this._bannerTimeout = null;
         this._isVolumeHud = false;
-        this._volumeHudTimeout = null;
         this._mixer = null;
         this._mixerSignals = [];
         this._sinkSignals = [];
         this._volumeSink = null;
         this._volumeApplying = false;
+        this._hudQueue = createHudQueue({
+            onActiveChanged: (active, _prev, payload) => {
+                this._applyHudActive(active, payload);
+            },
+        });
         this._prevUpState = null;
         this._prevPct = null;
         this._lowBatteryArmed = true;
@@ -807,11 +811,53 @@ export default class IsletExtension extends Extension {
         }
     }
 
-    _clearBannerTimeout() {
-        if (this._bannerTimeout) {
-            GLib.source_remove(this._bannerTimeout);
-            this._bannerTimeout = null;
+    _prepareTransientHudChrome() {
+        this._isExpanded = false;
+        this._currentTab = 0;
+        this._hoverActive = false;
+        this._hideDismissShade();
+        this._setExpandedTabPickable(false);
+    }
+
+    _applyHudActive(active, payload) {
+        const wasVolume = this._isVolumeHud;
+
+        this._isVolumeHud = active === HudKind.VOLUME;
+        this._isBatteryBanner = active === HudKind.BATTERY;
+
+        if (this._isVolumeHud) {
+            const level = payload?.level;
+            const muted = payload?.muted;
+            if (level != null)
+                this._volumeHud?.setLevel(level, !!muted);
+            this._volumeHud?.setReactive(true);
+        } else if (wasVolume) {
+            this._volumeHud?.setReactive(false);
         }
+
+        if (this._isBatteryBanner && payload) {
+            const pct = payload.pct ?? Math.round(this._displayDevice?.percentage ?? 0);
+            if (payload.kind === 'charging') {
+                this._batteryBanner.update({
+                    title: 'Charging',
+                    pct,
+                    theme: 'charging',
+                });
+            } else if (payload.kind === 'low') {
+                this._batteryBanner.update({
+                    title: 'Low Battery',
+                    pct,
+                    theme: 'low',
+                });
+            }
+        }
+
+        // AUTH morph is owned by fingerprint begin/end; queue only gates volume/battery.
+        if (active === HudKind.AUTH)
+            return;
+
+        this._animTarget = null;
+        this._updateIslandView();
     }
 
     _isOnAc(state) {
@@ -823,16 +869,13 @@ export default class IsletExtension extends Extension {
     _showBatteryBanner(kind) {
         if (!this._island || !this._displayDevice)
             return;
-        if (this._isFingerprintAuth || this._isVolumeHud)
+        if (this._isFingerprintAuth)
             return;
 
-        this._isExpanded = false;
-        this._currentTab = 0;
-        this._hoverActive = false;
-        this._hideDismissShade();
-        this._setExpandedTabPickable(false);
+        this._prepareTransientHudChrome();
 
         const pct = Math.round(this._displayDevice.percentage);
+        const payload = { kind, pct };
         if (kind === 'charging') {
             this._batteryBanner.update({
                 title: 'Charging',
@@ -847,31 +890,14 @@ export default class IsletExtension extends Extension {
             });
         }
 
-        this._isBatteryBanner = true;
-        this._animTarget = null;
-        this._clearBannerTimeout();
-        this._bannerTimeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, BATTERY_BANNER_MS, () => {
-            this._bannerTimeout = null;
-            this._hideBatteryBanner();
-            return GLib.SOURCE_REMOVE;
+        this._hudQueue?.request(HudKind.BATTERY, {
+            payload,
+            holdMs: BATTERY_BANNER_MS,
         });
-        this._updateIslandView();
     }
 
     _hideBatteryBanner() {
-        if (!this._isBatteryBanner)
-            return;
-        this._isBatteryBanner = false;
-        this._animTarget = null;
-        this._clearBannerTimeout();
-        this._updateIslandView();
-    }
-
-    _clearVolumeHudTimeout() {
-        if (this._volumeHudTimeout) {
-            GLib.source_remove(this._volumeHudTimeout);
-            this._volumeHudTimeout = null;
-        }
+        this._hudQueue?.dismiss(HudKind.BATTERY);
     }
 
     _getOutputStream() {
@@ -963,36 +989,19 @@ export default class IsletExtension extends Extension {
         if (this._isFingerprintAuth)
             return;
 
-        this._hideBatteryBanner();
-        this._isExpanded = false;
-        this._currentTab = 0;
-        this._hoverActive = false;
-        this._hideDismissShade();
-        this._setExpandedTabPickable(false);
+        this._prepareTransientHudChrome();
 
         const { level, muted } = this._readOutputVolume();
         this._volumeHud?.setLevel(level, muted);
-        this._volumeHud?.setReactive(true);
 
-        this._isVolumeHud = true;
-        this._animTarget = null;
-        this._clearVolumeHudTimeout();
-        this._volumeHudTimeout = GLib.timeout_add(GLib.PRIORITY_DEFAULT, VOLUME_HUD_MS, () => {
-            this._volumeHudTimeout = null;
-            this._hideVolumeHud();
-            return GLib.SOURCE_REMOVE;
+        this._hudQueue?.request(HudKind.VOLUME, {
+            payload: { level, muted },
+            holdMs: VOLUME_HUD_MS,
         });
-        this._updateIslandView();
     }
 
     _hideVolumeHud() {
-        if (!this._isVolumeHud)
-            return;
-        this._isVolumeHud = false;
-        this._volumeHud?.setReactive(false);
-        this._animTarget = null;
-        this._clearVolumeHudTimeout();
-        this._updateIslandView();
+        this._hudQueue?.dismiss(HudKind.VOLUME);
     }
 
     _setupVolumeMonitor() {
@@ -1021,7 +1030,6 @@ export default class IsletExtension extends Extension {
     }
 
     _teardownVolumeMonitor() {
-        this._clearVolumeHudTimeout();
         this._hideVolumeHud();
         this._disconnectVolumeSink();
         if (this._mixer && this._mixerSignals?.length) {
@@ -1115,21 +1123,17 @@ export default class IsletExtension extends Extension {
         if (!this._island)
             return;
 
-        // Priority over battery banner
-        this._hideBatteryBanner();
-        this._hideVolumeHud();
-
-        this._isExpanded = false;
-        this._currentTab = 0;
-        this._hoverActive = false;
-        this._hideDismissShade();
-        this._setExpandedTabPickable(false);
-
+        this._prepareTransientHudChrome();
         this._fingerprintSuccessPending = false;
         this._clearFingerprintHoldTimeout();
         this._isFingerprintAuth = true;
-        this._animTarget = null;
         this._fingerprintUi?.showScanning();
+
+        // Auth wins; drop timed HUDs so they don't resume after unlock.
+        this._hudQueue?.dismissTimed();
+        this._hudQueue?.request(HudKind.AUTH, { holdMs: null });
+
+        this._animTarget = null;
         this._updateIslandView();
     }
 
@@ -1176,6 +1180,7 @@ export default class IsletExtension extends Extension {
         this._fingerprintSuccessPending = false;
         this._isFingerprintAuth = false;
         this._fingerprintUi?.hide();
+        this._hudQueue?.dismiss(HudKind.AUTH);
         this._animTarget = null;
         this._updateIslandView();
     }
@@ -1273,8 +1278,8 @@ export default class IsletExtension extends Extension {
             GLib.source_remove(this._timeTimeout);
             this._timeTimeout = null;
         }
-        this._clearBannerTimeout();
-        this._hideBatteryBanner();
+        this._hudQueue?.clear();
+        this._hudQueue = null;
         this._teardownVolumeMonitor();
         this._clearFingerprintHoldTimeout();
         this._endFingerprintAuth();
