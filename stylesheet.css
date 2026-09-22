@@ -496,11 +496,45 @@
     font-weight: 600;
 }
 
-/* Settings tab */
+/* Settings tab — scrollable categorized list (does not cover weather/battery row) */
+.islet-settings-tab {
+    padding: 0;
+    background-color: #000000;
+}
+
+.islet-settings-scroll {
+    padding: 0;
+    background-color: #000000;
+}
+
+/* Hide settings scrollbar / drag handle (scroll via island gesture). */
+.islet-settings-scroll StScrollBar {
+    min-width: 0;
+    min-height: 0;
+    width: 0;
+    height: 0;
+    padding: 0;
+    margin: 0;
+    opacity: 0;
+}
+
 .islet-settings-box {
-    spacing: 4px;
-    padding: 0 2px;
-    text-transform: lowercase;
+    spacing: 6px;
+    padding: 0 2px 4px;
+    background-color: #000000;
+}
+
+.islet-settings-section {
+    font-family: "Inter", "Adwaita Sans", "Cantarell", sans-serif;
+    color: rgba(255, 255, 255, 0.42);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    padding-top: 6px;
+}
+
+.islet-settings-section:first-child {
+    padding-top: 0;
 }
 
 .islet-settings-row {
@@ -515,7 +549,7 @@
 }
 
 .islet-settings-label {
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(255, 255, 255, 0.78);
     font-size: 12px;
     font-weight: 600;
     letter-spacing: 0;
@@ -566,6 +600,13 @@
     background-color: transparent;
     border: none;
     padding: 0;
+}
+
+.islet-search-cursor {
+    background-color: #FFFFFF;
+    border-radius: 1px;
+    min-width: 2px;
+    width: 2px;
 }
 
 .islet-settings-chip:hover {

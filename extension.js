@@ -31,7 +31,7 @@ import {
 } from './lib/constants.js';
 import { createHttpGet, startWeatherPolling, formatTemperature } from './lib/weather.js';
 import { MediaController } from './lib/media.js';
-import { buildSettingsTab, syncSettingsUi } from './lib/settingsUi.js';
+import { buildSettingsTab, syncSettingsUi, setSettingsControlsReactive, scrollSettingsBy } from './lib/settingsUi.js';
 import { buildBatteryBanner } from './lib/batteryBannerUi.js';
 import { buildVolumeHud } from './lib/volumeHudUi.js';
 import { createHudQueue, HudKind } from './lib/hudQueue.js';
@@ -176,6 +176,7 @@ export default class IsletExtension extends Extension {
             layout_manager: new Clutter.BinLayout(),
             x_expand: true,
             y_expand: true,
+            clip_to_allocation: true,
         });
 
         // Tab 0: Overview
@@ -497,6 +498,27 @@ export default class IsletExtension extends Extension {
                 dx = 1;
             }
 
+            // Settings: vertical = scroll content only; horizontal = tab swipe.
+            if (this._currentTab === 4) {
+                const horizontal = direction === Clutter.ScrollDirection.SMOOTH
+                    ? Math.abs(deltaX) > Math.abs(deltaY) + 0.05
+                    : (direction === Clutter.ScrollDirection.LEFT ||
+                       direction === Clutter.ScrollDirection.RIGHT);
+                if (!horizontal) {
+                    let dy = 0;
+                    if (direction === Clutter.ScrollDirection.SMOOTH)
+                        dy = -deltaY;
+                    else if (direction === Clutter.ScrollDirection.UP)
+                        dy = 1;
+                    else if (direction === Clutter.ScrollDirection.DOWN)
+                        dy = -1;
+                    if (Math.abs(dy) > 0.01)
+                        scrollSettingsBy(this, dy);
+                    this._scrollAccumulator = 0;
+                    return Clutter.EVENT_STOP;
+                }
+            }
+
             if (now - (this._lastTabSwitchMs || 0) < 400) {
                 this._scrollAccumulator = 0;
                 return Clutter.EVENT_STOP;
@@ -541,6 +563,16 @@ export default class IsletExtension extends Extension {
 
         this._currentTab = index;
         this._lastTabSwitchMs = GLib.get_monotonic_time() / 1000;
+
+        if (index === 4) {
+            try {
+                const adj = this._settingsScroll?.vscroll?.adjustment;
+                if (adj)
+                    adj.value = 0;
+            } catch (e) {
+                // ignore
+            }
+        }
 
         if (from === 3 && index !== 3)
             onShortcutsTabHidden(this);
@@ -593,23 +625,7 @@ export default class IsletExtension extends Extension {
         setShortcutsReactive(this, shortcutsOn);
 
         const settingsOn = expanded && this._currentTab === 4;
-        if (this._settingsTab) {
-            this._settingsTab.get_children().forEach(row => {
-                row.get_children().forEach(child => {
-                    if (child instanceof St.Button) {
-                        child.reactive = settingsOn;
-                        child.can_focus = settingsOn;
-                    } else if (child.get_children) {
-                        child.get_children().forEach(grand => {
-                            if (grand instanceof St.Button) {
-                                grand.reactive = settingsOn;
-                                grand.can_focus = settingsOn;
-                            }
-                        });
-                    }
-                });
-            });
-        }
+        setSettingsControlsReactive(this, settingsOn);
     }
 
     _setupAnimations(initialWidth, initialHeight, topMargin) {

@@ -70,9 +70,9 @@ Then **log out and log in** (or restart GNOME Shell on Xorg with Alt+F2 → `r`)
 | Media → transport | `playerctl` previous / play-pause / next |
 | Shortcuts → short-press | Launch assigned app |
 | Shortcuts → long-press | Pick a different installed app for that slot |
-| Settings → volume / battery | Toggle volume HUD and battery banners |
-| Settings → low | Low-battery banner threshold (15 / 20 / 25%) |
-| Settings → fprint | Toggle experimental fingerprint island |
+| Settings → Volume / Battery | Toggle volume HUD and battery banners |
+| Settings → Low battery | Low-battery banner threshold (15 / 20 / 25%) |
+| Settings → Fingerprint | Toggle experimental fingerprint island |
 
 ## Project layout
 
