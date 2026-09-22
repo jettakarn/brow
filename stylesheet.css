@@ -11,6 +11,18 @@
     font-weight: 500;
 }
 
+@font-face {
+    font-family: "Inter";
+    src: url("fonts/Inter-SemiBold.woff2");
+    font-weight: 600;
+}
+
+@font-face {
+    font-family: "Inter";
+    src: url("fonts/Inter-Bold.woff2");
+    font-weight: 700;
+}
+
 /* Peninsula: flush to top edge, rounded bottom only */
 .islet-container {
     background-color: #000000;
@@ -42,8 +54,8 @@
 .islet-volume-hud-title {
     font-family: "Inter", "Adwaita Sans", "Cantarell", sans-serif;
     font-size: 15px;
-    font-weight: 500;
-    letter-spacing: 0.1px;
+    font-weight: 600;
+    letter-spacing: 0;
     color: #FFFFFF;
 }
 
@@ -65,8 +77,8 @@
 .islet-battery-banner-pct {
     font-family: "Inter", "Adwaita Sans", "Cantarell", sans-serif;
     font-size: 15px;
-    font-weight: 500;
-    letter-spacing: 0.1px;
+    font-weight: 600;
+    letter-spacing: 0;
 }
 
 .islet-battery-banner-title {
@@ -226,36 +238,37 @@
 .islet-text {
     color: #FFFFFF;
     font-size: 14px;
-    font-weight: 500;
-    letter-spacing: 0.2px;
+    font-weight: 600;
+    letter-spacing: 0;
 }
 
 .islet-weather {
     color: rgba(255, 255, 255, 0.92);
     font-size: 14px;
-    font-weight: 500;
-    letter-spacing: 0.2px;
+    font-weight: 600;
+    letter-spacing: 0;
 }
 
 .islet-large-time {
     color: #FFFFFF;
     font-size: 52px;
-    font-weight: 400;
-    letter-spacing: -1.5px;
+    font-weight: 600;
+    letter-spacing: -2px;
     line-height: 1.05;
 }
 
 .islet-large-date {
     color: rgba(255, 255, 255, 0.55);
     font-size: 15px;
-    font-weight: 400;
-    letter-spacing: 0.3px;
+    font-weight: 500;
+    letter-spacing: 0;
 }
 
 /* Media tab (same expanded height / padding rhythm as other tabs) */
 .islet-media-tab {
     spacing: 10px;
     padding: 0 2px;
+    text-transform: lowercase;
 }
 
 .islet-media-header {
@@ -275,14 +288,14 @@
 .islet-card-title {
     color: #FFFFFF;
     font-size: 15px;
-    font-weight: 500;
-    letter-spacing: 0.1px;
+    font-weight: 600;
+    letter-spacing: 0;
 }
 
 .islet-card-artist {
     color: rgba(255, 255, 255, 0.5);
     font-size: 12px;
-    font-weight: 400;
+    font-weight: 500;
 }
 
 .islet-album-art {
@@ -334,7 +347,7 @@
 .islet-progress-time {
     color: rgba(255, 255, 255, 0.55);
     font-size: 11px;
-    font-weight: 400;
+    font-weight: 500;
     min-width: 36px;
 }
 
@@ -398,8 +411,8 @@
     background-color: #FFFFFF;
     color: #000000;
     font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0.2px;
+    font-weight: 600;
+    letter-spacing: 0;
     border-radius: 6px;
     padding: 2px 8px;
 }
@@ -407,6 +420,7 @@
 /* Quick Apps Shortcuts */
 .islet-qa-box {
     spacing: 8px;
+    text-transform: lowercase;
 }
 
 .islet-qa-chips {
@@ -419,8 +433,8 @@
     border-radius: 12px;
     padding: 8px 14px;
     font-size: 13px;
-    font-weight: 500;
-    letter-spacing: 0.15px;
+    font-weight: 600;
+    letter-spacing: 0;
     box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.12);
     transition-duration: 180ms;
 }
@@ -445,7 +459,7 @@
     border-radius: 10px;
     padding: 4px 12px;
     font-size: 12px;
-    font-weight: 500;
+    font-weight: 600;
 }
 
 .islet-qa-cancel:hover {
@@ -479,13 +493,14 @@
     font-family: "Inter", "Adwaita Sans", "Cantarell", sans-serif;
     color: #FFFFFF;
     font-size: 12px;
-    font-weight: 500;
+    font-weight: 600;
 }
 
 /* Settings tab */
 .islet-settings-box {
-    spacing: 8px;
+    spacing: 4px;
     padding: 0 2px;
+    text-transform: lowercase;
 }
 
 .islet-settings-row {
@@ -502,14 +517,14 @@
 .islet-settings-label {
     color: rgba(255, 255, 255, 0.7);
     font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0.2px;
+    font-weight: 600;
+    letter-spacing: 0;
 }
 
 .islet-settings-value {
     color: #FFFFFF;
     font-size: 12px;
-    font-weight: 500;
+    font-weight: 600;
     min-width: 22px;
     text-align: center;
 }
@@ -522,11 +537,35 @@
     background-color: rgba(255, 255, 255, 0.12);
     color: rgba(255, 255, 255, 0.85);
     border-radius: 10px;
-    padding: 4px 10px;
-    font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0.15px;
+    padding: 3px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0;
     transition-duration: 150ms;
+}
+
+/* Search tab — hint + plain text, no input bar */
+.islet-search-tab {
+    padding: 0 2px;
+    text-transform: lowercase;
+}
+
+.islet-search-field {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    min-height: 28px;
+}
+
+.islet-search-hint {
+    font-family: "Inter", "Adwaita Sans", "Cantarell", sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 0;
+    color: rgba(255, 255, 255, 0.38);
+    background-color: transparent;
+    border: none;
+    padding: 0;
 }
 
 .islet-settings-chip:hover {

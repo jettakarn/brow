@@ -43,6 +43,11 @@ import {
     setShortcutsReactive,
     onShortcutsTabHidden,
 } from './lib/shortcutsUi.js';
+import {
+    buildSearchTab,
+    setSearchReactive,
+    clearSearch,
+} from './lib/searchUi.js';
 
 export default class IsletExtension extends Extension {
     enable() {
@@ -192,14 +197,18 @@ export default class IsletExtension extends Extension {
         // Tab 1: Media card
         this._mediaTab = this._media.buildTab();
 
-        // Tab 2: Shortcuts (customizable apps)
+        // Tab 2: Search / address
+        this._searchTab = buildSearchTab(this);
+
+        // Tab 3: Shortcuts (customizable apps)
         this._shortcutsTab = buildShortcutsTab(this);
 
-        // Tab 3: Settings
+        // Tab 4: Settings
         this._settingsTab = buildSettingsTab(this);
 
         this._largeContentStack.add_child(this._overviewTab);
         this._largeContentStack.add_child(this._mediaTab);
+        this._largeContentStack.add_child(this._searchTab);
         this._largeContentStack.add_child(this._shortcutsTab);
         this._largeContentStack.add_child(this._settingsTab);
         this._largeContainer.add_child(topRow);
@@ -277,12 +286,74 @@ export default class IsletExtension extends Extension {
         bind('shortcut-apps', () => {
             rebuildShortcuts(this);
         });
+        bind('show-volume-hud', () => {
+            syncSettingsUi(this);
+            if (!this._settings.get_boolean('show-volume-hud'))
+                this._hideVolumeHud();
+        });
+        bind('show-battery-banners', () => {
+            syncSettingsUi(this);
+            if (!this._settings.get_boolean('show-battery-banners'))
+                this._hideBatteryBanner();
+        });
+        bind('low-battery-percent', () => {
+            syncSettingsUi(this);
+            this._rearmLowBattery();
+        });
+        bind('fingerprint-island', () => {
+            syncSettingsUi(this);
+            this._applyFingerprintSetting();
+        });
+    }
+
+    _lowBatteryThreshold() {
+        try {
+            const n = this._settings?.get_int('low-battery-percent');
+            if (n === 15 || n === 20 || n === 25)
+                return n;
+        } catch (e) {
+            // fall through
+        }
+        return LOW_BATTERY_PCT;
+    }
+
+    _rearmLowBattery() {
+        if (!this._displayDevice)
+            return;
+        const pct = this._displayDevice.percentage;
+        this._lowBatteryArmed = pct > this._lowBatteryThreshold();
+    }
+
+    _applyFingerprintSetting() {
+        const want = EXPERIMENTAL_FINGERPRINT &&
+            !!this._settings?.get_boolean('fingerprint-island');
+
+        if (want) {
+            if (!this._fingerprintMonitor)
+                this._setupFingerprintAuth();
+            return;
+        }
+
+        this._endFingerprintAuth();
+        if (this._fingerprintMonitor) {
+            this._fingerprintMonitor.stop();
+            this._fingerprintMonitor = null;
+        }
+        if (this._shieldSignalId && Main.screenShield) {
+            try {
+                Main.screenShield.disconnect(this._shieldSignalId);
+            } catch (e) {
+                // ignore
+            }
+            this._shieldSignalId = null;
+        }
     }
 
     _collapseExpanded() {
         if (!this._island || !this._isExpanded)
             return;
         onShortcutsTabHidden(this);
+        clearSearch(this);
         this._isExpanded = false;
         this._currentTab = 0;
         this._hoverActive = false;
@@ -449,7 +520,13 @@ export default class IsletExtension extends Extension {
     }
 
     _allTabs() {
-        return [this._overviewTab, this._mediaTab, this._shortcutsTab, this._settingsTab];
+        return [
+            this._overviewTab,
+            this._mediaTab,
+            this._searchTab,
+            this._shortcutsTab,
+            this._settingsTab,
+        ];
     }
 
     _switchTab(index) {
@@ -465,7 +542,7 @@ export default class IsletExtension extends Extension {
         this._currentTab = index;
         this._lastTabSwitchMs = GLib.get_monotonic_time() / 1000;
 
-        if (from === 2 && index !== 2)
+        if (from === 3 && index !== 3)
             onShortcutsTabHidden(this);
 
         const duration = 250;
@@ -510,10 +587,12 @@ export default class IsletExtension extends Extension {
 
         this._media?.setControlsReactive(expanded && this._currentTab === 1);
 
-        const shortcutsOn = expanded && this._currentTab === 2;
+        setSearchReactive(this, expanded && this._currentTab === 2);
+
+        const shortcutsOn = expanded && this._currentTab === 3;
         setShortcutsReactive(this, shortcutsOn);
 
-        const settingsOn = expanded && this._currentTab === 3;
+        const settingsOn = expanded && this._currentTab === 4;
         if (this._settingsTab) {
             this._settingsTab.get_children().forEach(row => {
                 row.get_children().forEach(child => {
@@ -701,6 +780,10 @@ export default class IsletExtension extends Extension {
         if (!this._island || !this._hitArea)
             return;
 
+        // Integer geometry avoids soft/pixelated St text during L/R morph.
+        targetWidth = Math.round(targetWidth);
+        targetHeight = Math.round(targetHeight);
+
         const next = {
             targetWidth,
             targetHeight,
@@ -726,10 +809,10 @@ export default class IsletExtension extends Extension {
         }
         this._animTarget = next;
 
-        const hitW = targetWidth + HIT_PAD_X * 2;
-        const hitH = targetHeight + HIT_PAD_BOTTOM;
-        const hitX = this._centerX - (targetWidth / 2) - HIT_PAD_X;
-        const hitY = this._topMargin;
+        const hitW = Math.round(targetWidth + HIT_PAD_X * 2);
+        const hitH = Math.round(targetHeight + HIT_PAD_BOTTOM);
+        const hitX = Math.round(this._centerX - (targetWidth / 2) - HIT_PAD_X);
+        const hitY = Math.round(this._topMargin);
 
         this._hitArea.ease({
             width: hitW,
@@ -871,6 +954,8 @@ export default class IsletExtension extends Extension {
             return;
         if (this._isFingerprintAuth)
             return;
+        if (!this._settings?.get_boolean('show-battery-banners'))
+            return;
 
         this._prepareTransientHudChrome();
 
@@ -988,6 +1073,8 @@ export default class IsletExtension extends Extension {
             return;
         if (this._isFingerprintAuth)
             return;
+        if (!this._settings?.get_boolean('show-volume-hud'))
+            return;
 
         this._prepareTransientHudChrome();
 
@@ -1056,19 +1143,20 @@ export default class IsletExtension extends Extension {
         const state = this._displayDevice.state;
         const pct = this._displayDevice.percentage;
 
-        if (pct > LOW_BATTERY_PCT)
+        if (pct > this._lowBatteryThreshold())
             this._lowBatteryArmed = true;
 
         const prevState = this._prevUpState;
         const prevPct = this._prevPct;
         const onAc = this._isOnAc(state);
         const wasOnAc = prevState != null && this._isOnAc(prevState);
+        const lowPct = this._lowBatteryThreshold();
 
         if (prevState != null && !wasOnAc && onAc)
             this._showBatteryBanner('charging');
         else if (prevPct != null &&
-                 prevPct > LOW_BATTERY_PCT &&
-                 pct <= LOW_BATTERY_PCT &&
+                 prevPct > lowPct &&
+                 pct <= lowPct &&
                  !onAc &&
                  this._lowBatteryArmed) {
             this._lowBatteryArmed = false;
@@ -1089,6 +1177,10 @@ export default class IsletExtension extends Extension {
     _setupFingerprintAuth() {
         if (!EXPERIMENTAL_FINGERPRINT)
             return;
+        if (!this._settings?.get_boolean('fingerprint-island'))
+            return;
+        if (this._fingerprintMonitor)
+            return;
 
         this._fingerprintMonitor = new FingerprintAuthMonitor({
             onStart: () => this._beginFingerprintAuth(),
@@ -1106,7 +1198,7 @@ export default class IsletExtension extends Extension {
         this._fingerprintMonitor.start();
 
         try {
-            if (Main.screenShield) {
+            if (Main.screenShield && !this._shieldSignalId) {
                 this._shieldSignalId = Main.screenShield.connect('active-changed', () => {
                     if (!Main.screenShield.active &&
                         this._isFingerprintAuth &&
@@ -1121,6 +1213,8 @@ export default class IsletExtension extends Extension {
 
     _beginFingerprintAuth() {
         if (!this._island)
+            return;
+        if (!this._settings?.get_boolean('fingerprint-island'))
             return;
 
         this._prepareTransientHudChrome();
@@ -1212,7 +1306,7 @@ export default class IsletExtension extends Extension {
             this._displayDevice = this._upClient.get_display_device();
             this._prevUpState = this._displayDevice.state;
             this._prevPct = this._displayDevice.percentage;
-            if (this._prevPct > LOW_BATTERY_PCT)
+            if (this._prevPct > this._lowBatteryThreshold())
                 this._lowBatteryArmed = true;
             this._updateBattery();
             this._batterySignalId = this._displayDevice.connect('notify::percentage', () => this._onBatteryChanged());

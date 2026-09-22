@@ -26,5 +26,26 @@
       <summary>Shortcut app desktop IDs</summary>
       <description>Four installed application .desktop IDs for the Shortcuts tab. Long-press a chip in the island to reassign.</description>
     </key>
+    <key name="show-volume-hud" type="b">
+      <default>true</default>
+      <summary>Show volume HUD</summary>
+      <description>Morph the island into a volume bar when system output volume changes</description>
+    </key>
+    <key name="show-battery-banners" type="b">
+      <default>true</default>
+      <summary>Show battery banners</summary>
+      <description>Show charging and low-battery peninsula banners</description>
+    </key>
+    <key name="low-battery-percent" type="i">
+      <default>20</default>
+      <range min="15" max="25"/>
+      <summary>Low battery threshold</summary>
+      <description>Show the low-battery banner when charge drops to this percentage or below while on battery (15, 20, or 25)</description>
+    </key>
+    <key name="fingerprint-island" type="b">
+      <default>true</default>
+      <summary>Fingerprint auth island</summary>
+      <description>Experimental: morph the island during fprintd verification</description>
+    </key>
   </schema>
 </schemalist>
