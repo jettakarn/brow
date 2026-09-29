@@ -21,10 +21,8 @@ import {
     MEDIA_PLAYER_HEIGHT,
     BATTERY_BANNER_MS,
     BATTERY_BANNER_WIDTH,
-    BATTERY_BANNER_HEIGHT,
     VOLUME_HUD_MS,
     VOLUME_HUD_WIDTH,
-    VOLUME_HUD_HEIGHT,
     LOW_BATTERY_PCT,
     EXPERIMENTAL_FINGERPRINT,
     AUTH_SQUARE_SIZE,
@@ -58,7 +56,7 @@ export default class IsletExtension extends Extension {
         this._centerX = this._monitor.x + (this._monitor.width / 2);
 
         const initialWidth = 170;
-        const initialHeight = 40;
+        const initialHeight = this._readPanelHeight();
         const topMargin = 0;
 
         this._isPlaying = false;
@@ -253,6 +251,28 @@ export default class IsletExtension extends Extension {
         syncSettingsUi(this);
         this._setExpandedTabPickable(false);
         this._media.showPlaceholder();
+        this._panelHeightId = Main.panel?.connect?.('notify::height', () => this._onPanelHeightChanged()) ?? 0;
+    }
+
+    _readPanelHeight() {
+        let h = 0;
+        try {
+            h = Main.panel?.height;
+            if (!(h > 0))
+                h = Main.panel?.get_height?.() ?? 0;
+        } catch (e) {
+            h = 0;
+        }
+        return h > 0 ? Math.round(h) : 40;
+    }
+
+    _onPanelHeightChanged() {
+        const next = this._readPanelHeight();
+        if (next === this._initialHeight)
+            return;
+        this._initialHeight = next;
+        if (this._island && !this._isExpanded && !this._isFingerprintAuth)
+            this._updateIslandView();
     }
 
     _setupWeather() {
@@ -786,7 +806,7 @@ export default class IsletExtension extends Extension {
 
         if (this._isVolumeHud) {
             targetWidth = VOLUME_HUD_WIDTH;
-            targetHeight = VOLUME_HUD_HEIGHT;
+            targetHeight = this._initialHeight;
             quickOp = 0;
             mediaOp = 0;
             largeOp = 0;
@@ -800,7 +820,7 @@ export default class IsletExtension extends Extension {
 
         if (this._isBatteryBanner) {
             targetWidth = BATTERY_BANNER_WIDTH;
-            targetHeight = BATTERY_BANNER_HEIGHT;
+            targetHeight = this._initialHeight;
             quickOp = 0;
             mediaOp = 0;
             largeOp = 0;
@@ -1432,6 +1452,15 @@ export default class IsletExtension extends Extension {
 
     disable() {
         this._clearHoverLeaveTimeout();
+
+        if (this._panelHeightId && Main.panel) {
+            try {
+                Main.panel.disconnect(this._panelHeightId);
+            } catch (e) {
+                // ignore
+            }
+            this._panelHeightId = 0;
+        }
 
         if (this._stageCaptureId) {
             global.stage.disconnect(this._stageCaptureId);
