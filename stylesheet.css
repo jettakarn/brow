@@ -24,7 +24,7 @@
 }
 
 /* Peninsula: flush to top edge, rounded bottom only */
-.islet-container {
+.brow-container {
     background-color: #000000;
     border-radius: 0 0 28px 28px;
     box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.35);
@@ -32,26 +32,26 @@
 }
 
 /* Battery banners (charging / low) — same peninsula expand as hover */
-.islet-battery-banner {
+.brow-battery-banner {
     padding: 0 18px;
     spacing: 8px;
 }
 
 /* Volume HUD — Apple-style level bar */
-.islet-volume-hud {
+.brow-volume-hud {
     padding: 0 18px;
     spacing: 10px;
 }
 
-.islet-volume-hud-left {
+.brow-volume-hud-left {
     spacing: 8px;
 }
 
-.islet-volume-hud-icon {
+.brow-volume-hud-icon {
     color: #FFFFFF;
 }
 
-.islet-volume-hud-title {
+.brow-volume-hud-title {
     font-family: "Inter", "Adwaita Sans", "Cantarell", sans-serif;
     font-size: 15px;
     font-weight: 600;
@@ -59,109 +59,109 @@
     color: #FFFFFF;
 }
 
-.islet-volume-hud-hit {
+.brow-volume-hud-hit {
     min-height: 20px;
 }
 
-.islet-volume-hud-track {
+.brow-volume-hud-track {
     background-color: rgba(255, 255, 255, 0.22);
     border-radius: 99px;
 }
 
-.islet-volume-hud-fill {
+.brow-volume-hud-fill {
     background-color: #FFFFFF;
     border-radius: 99px;
 }
 
-.islet-battery-banner-title,
-.islet-battery-banner-pct {
+.brow-battery-banner-title,
+.brow-battery-banner-pct {
     font-family: "Inter", "Adwaita Sans", "Cantarell", sans-serif;
     font-size: 15px;
     font-weight: 600;
     letter-spacing: 0;
 }
 
-.islet-battery-banner-title {
+.brow-battery-banner-title {
     color: #FFFFFF;
 }
 
-.islet-battery-banner-right {
+.brow-battery-banner-right {
     spacing: 8px;
 }
 
-.islet-batt-glyph {
+.brow-batt-glyph {
     spacing: 1px;
 }
 
-.islet-batt-pct-charging {
+.brow-batt-pct-charging {
     color: #7CFF6B;
 }
 
-.islet-batt-pct-low {
+.brow-batt-pct-low {
     color: #FF4B6A;
 }
 
-.islet-batt-body {
+.brow-batt-body {
     border-radius: 3px;
 }
 
-.islet-batt-fill {
+.brow-batt-fill {
     margin-left: 2px;
     border-radius: 2px;
 }
 
-.islet-batt-nub {
+.brow-batt-nub {
     border-radius: 1px;
 }
 
-.islet-batt-theme-charging .islet-batt-body {
+.brow-batt-theme-charging .brow-batt-body {
     background-color: rgba(124, 255, 107, 0.2);
     border: none;
 }
 
-.islet-batt-theme-charging .islet-batt-fill {
+.brow-batt-theme-charging .brow-batt-fill {
     background-color: #7CFF6B;
 }
 
-.islet-batt-theme-charging .islet-batt-nub {
+.brow-batt-theme-charging .brow-batt-nub {
     background-color: #7CFF6B;
 }
 
-.islet-batt-theme-low .islet-batt-body {
+.brow-batt-theme-low .brow-batt-body {
     background-color: rgba(80, 40, 48, 0.9);
     border: 1.5px solid rgba(255, 75, 106, 0.55);
 }
 
-.islet-batt-theme-low .islet-batt-fill {
+.brow-batt-theme-low .brow-batt-fill {
     background-color: #FF4B6A;
 }
 
-.islet-batt-theme-low .islet-batt-nub {
+.brow-batt-theme-low .brow-batt-nub {
     background-color: rgba(255, 75, 106, 0.55);
     border: 1px solid rgba(255, 75, 106, 0.55);
 }
 
 /* Experimental fingerprint auth square */
-.islet-auth-root {
+.brow-auth-root {
     padding: 0;
 }
 
-.islet-auth-island-edge {
+.brow-auth-island-edge {
     border-width: 0 2px 2px 2px;
     border-style: solid;
     border-color: #7CFF6B;
-    border-radius: 0 0 28px 28px; /* match .islet-container peninsula */
+    border-radius: 0 0 28px 28px; /* match .brow-container peninsula */
     background-color: transparent;
 }
 
-.islet-auth-ring {
+.brow-auth-ring {
     border: 1.5px solid #7CFF6B;
     border-radius: 99px;
     background-color: transparent;
 }
 
-.islet-auth-spin {
-    /* Same diameter as .islet-auth-ring — bright arc for 3D spin */
+.brow-auth-spin {
+    /* Same diameter as .brow-auth-ring — bright arc for 3D spin */
     border: 2.5px solid transparent;
     border-top-color: #B8FFA8;
     border-right-color: rgba(124, 255, 107, 0.55);
@@ -171,89 +171,89 @@
     background-color: transparent;
 }
 
-.islet-auth-frame {
+.brow-auth-frame {
     padding: 0;
 }
 
-.islet-auth-corner {
+.brow-auth-corner {
     border-color: #7CFF6B;
     border-style: solid;
 }
 
-.islet-auth-corner-tl {
+.brow-auth-corner-tl {
     border-width: 2.5px 0 0 2.5px;
     border-radius: 4px 0 0 0;
 }
 
-.islet-auth-corner-tr {
+.brow-auth-corner-tr {
     border-width: 2.5px 2.5px 0 0;
     border-radius: 0 4px 0 0;
 }
 
-.islet-auth-corner-bl {
+.brow-auth-corner-bl {
     border-width: 0 0 2.5px 2.5px;
     border-radius: 0 0 0 4px;
 }
 
-.islet-auth-corner-br {
+.brow-auth-corner-br {
     border-width: 0 2.5px 2.5px 0;
     border-radius: 0 0 4px 0;
 }
 
-.islet-auth-finger {
+.brow-auth-finger {
     color: #7CFF6B;
 }
 
-.islet-auth-check {
+.brow-auth-check {
     color: #7CFF6B;
 }
 
 /* Quick View Boxes */
-.islet-quick-box {
+.brow-quick-box {
     padding: 0 16px;
 }
 
-.islet-media-box {
+.brow-media-box {
     padding: 0 14px;
     spacing: 0;
 }
 
 /* Large View Box */
-.islet-large-box {
+.brow-large-box {
     padding: 18px 22px 16px;
 }
 
-.islet-large-box-player {
+.brow-large-box-player {
     padding: 28px 22px 8px;
 }
 
 /* Typography */
-.islet-text,
-.islet-weather,
-.islet-large-time,
-.islet-large-date,
-.islet-media-title,
-.islet-media-artist,
-.islet-battery-pill,
-.islet-qa-button {
+.brow-text,
+.brow-weather,
+.brow-large-time,
+.brow-large-date,
+.brow-media-title,
+.brow-media-artist,
+.brow-battery-pill,
+.brow-qa-button {
     font-family: "Inter", "Adwaita Sans", "Cantarell", sans-serif;
 }
 
-.islet-text {
+.brow-text {
     color: #FFFFFF;
     font-size: 14px;
     font-weight: 600;
     letter-spacing: 0;
 }
 
-.islet-weather {
+.brow-weather {
     color: rgba(255, 255, 255, 0.92);
     font-size: 14px;
     font-weight: 600;
     letter-spacing: 0;
 }
 
-.islet-large-time {
+.brow-large-time {
     color: #FFFFFF;
     font-size: 52px;
     font-weight: 600;
@@ -261,7 +261,7 @@
     line-height: 1.05;
 }
 
-.islet-large-date {
+.brow-large-date {
     color: rgba(255, 255, 255, 0.55);
     font-size: 15px;
     font-weight: 500;
@@ -269,159 +269,159 @@
 }
 
 /* Media tab (same expanded height / padding rhythm as other tabs) */
-.islet-media-tab {
+.brow-media-tab {
     spacing: 10px;
     padding: 0 2px;
     text-transform: lowercase;
 }
 
-.islet-media-compact {
+.brow-media-compact {
     spacing: 10px;
 }
 
-.islet-media-player-col {
+.brow-media-player-col {
     spacing: 16px;
 }
 
-.islet-media-player-head {
+.brow-media-player-head {
     spacing: 12px;
 }
 
-.islet-media-player-meta {
+.brow-media-player-meta {
     spacing: 2px;
 }
 
-.islet-media-player-progress {
+.brow-media-player-progress {
     spacing: 6px;
 }
 
-.islet-media-header {
+.brow-media-header {
     spacing: 12px;
 }
 
-.islet-media-meta {
+.brow-media-meta {
     spacing: 2px;
 }
 
-.islet-album-art-player,
-.islet-album-art-player .islet-album-placeholder,
-.islet-album-art-player .islet-album-cover {
+.brow-album-art-player,
+.brow-album-art-player .brow-album-placeholder,
+.brow-album-art-player .brow-album-cover {
     border-radius: 22px;
 }
 
-.islet-card-title,
-.islet-card-artist,
-.islet-progress-time {
+.brow-card-title,
+.brow-card-artist,
+.brow-progress-time {
     font-family: "Inter", "Adwaita Sans", "Cantarell", sans-serif;
 }
 
-.islet-card-title {
+.brow-card-title {
     color: #FFFFFF;
     font-size: 15px;
     font-weight: 600;
     letter-spacing: 0;
 }
 
-.islet-card-title-player {
+.brow-card-title-player {
     font-size: 18px;
     font-weight: 600;
 }
 
-.islet-card-artist {
+.brow-card-artist {
     color: rgba(255, 255, 255, 0.5);
     font-size: 12px;
     font-weight: 500;
 }
 
-.islet-album-art {
+.brow-album-art {
     border-radius: 10px;
 }
 
-.islet-album-placeholder {
+.brow-album-placeholder {
     background-color: #2A2A2A;
     border-radius: 10px;
 }
 
-.islet-album-note {
+.brow-album-note {
     color: rgba(255, 255, 255, 0.45);
 }
 
-.islet-album-cover {
+.brow-album-cover {
     border-radius: 10px;
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
 }
 
-.islet-waveform {
+.brow-waveform {
     spacing: 2px;
     padding: 0;
 }
 
-.islet-waveform-quick {
+.brow-waveform-quick {
     spacing: 2px;
 }
 
-.islet-wave-bar {
+.brow-wave-bar {
     spacing: 0;
 }
 
-.islet-wave-cap {
+.brow-wave-cap {
     background-color: #FFFFFF;
     border-radius: 99px;
 }
 
-.islet-wave-mid {
+.brow-wave-mid {
     background-color: #FFFFFF;
 }
 
-.islet-progress-block {
+.brow-progress-block {
     spacing: 4px;
 }
 
-.islet-progress-row {
+.brow-progress-row {
     spacing: 10px;
 }
 
-.islet-progress-times-under {
+.brow-progress-times-under {
     spacing: 0;
     padding: 0 1px;
 }
 
-.islet-progress-time {
+.brow-progress-time {
     color: rgba(255, 255, 255, 0.55);
     font-size: 11px;
     font-weight: 500;
     min-width: 36px;
 }
 
-.islet-progress-hit {
+.brow-progress-hit {
     min-height: 20px;
 }
 
-.islet-progress-track {
+.brow-progress-track {
     background-color: rgba(255, 255, 255, 0.18);
     border-radius: 2px;
 }
 
-.islet-progress-fill {
+.brow-progress-fill {
     background-color: #FFFFFF;
     border-radius: 2px;
 }
 
-.islet-media-buttons {
+.brow-media-buttons {
     spacing: 8px;
 }
 
-.islet-media-buttons-center {
+.brow-media-buttons-center {
     spacing: 18px;
 }
 
-.islet-media-buttons-center-player {
+.brow-media-buttons-center-player {
     spacing: 28px;
 }
 
-.islet-media-ctrl-btn {
+.brow-media-ctrl-btn {
     background-color: transparent;
     border-radius: 0;
     padding: 6px;
@@ -430,77 +430,77 @@
     transition-duration: 150ms;
 }
 
-.islet-media-ctrl-btn:hover {
+.brow-media-ctrl-btn:hover {
     background-color: transparent;
 }
 
-.islet-media-ctrl-btn:hover .islet-media-ctrl-icon {
+.brow-media-ctrl-btn:hover .brow-media-ctrl-icon {
     color: rgba(255, 255, 255, 0.75);
 }
 
-.islet-media-ctrl-btn:active {
+.brow-media-ctrl-btn:active {
     background-color: transparent;
 }
 
-.islet-media-ctrl-btn:active .islet-media-ctrl-icon {
+.brow-media-ctrl-btn:active .brow-media-ctrl-icon {
     color: rgba(255, 255, 255, 0.55);
 }
 
-.islet-media-ctrl-icon {
+.brow-media-ctrl-icon {
     color: #FFFFFF;
 }
 
-.islet-media-output-btn {
+.brow-media-output-btn {
     background-color: transparent;
 }
 
-.islet-media-volume-row {
+.brow-media-volume-row {
     spacing: 10px;
     padding: 2px 2px 0;
 }
 
-.islet-media-volume-icon {
+.brow-media-volume-icon {
     color: rgba(255, 255, 255, 0.7);
 }
 
-.islet-media-volume-hit {
+.brow-media-volume-hit {
     min-height: 22px;
 }
 
-.islet-media-volume-track {
+.brow-media-volume-track {
     background-color: rgba(255, 255, 255, 0.22);
     border-radius: 99px;
 }
 
-.islet-media-volume-fill {
+.brow-media-volume-fill {
     background-color: #FFFFFF;
     border-radius: 99px;
 }
 
-.islet-media-output-pill-wrap {
+.brow-media-output-pill-wrap {
     padding-top: 2px;
 }
 
-.islet-media-output-pill {
+.brow-media-output-pill {
     background-color: rgba(255, 255, 255, 0.14);
     border-radius: 99px;
     padding: 6px 14px;
     min-height: 28px;
 }
 
-.islet-media-output-pill:hover {
+.brow-media-output-pill:hover {
     background-color: rgba(255, 255, 255, 0.2);
 }
 
-.islet-media-output-pill-inner {
+.brow-media-output-pill-inner {
     spacing: 6px;
 }
 
-.islet-media-output-pill-icon {
+.brow-media-output-pill-icon {
     color: #FFFFFF;
 }
 
-.islet-media-output-pill-label {
+.brow-media-output-pill-label {
     font-family: "Inter", "Adwaita Sans", "Cantarell", sans-serif;
     color: #FFFFFF;
     font-size: 12px;
@@ -509,7 +509,7 @@
 }
 
 /* Battery Pill */
-.islet-battery-pill {
+.brow-battery-pill {
     background-color: #FFFFFF;
     color: #000000;
     font-size: 12px;
@@ -520,16 +520,16 @@
 }
 
 /* Quick Apps Shortcuts */
-.islet-qa-box {
+.brow-qa-box {
     spacing: 8px;
     text-transform: lowercase;
 }
 
-.islet-qa-chips {
+.brow-qa-chips {
     spacing: 10px;
 }
 
-.islet-qa-button {
+.brow-qa-button {
     background-color: #FFFFFF;
     color: #000000;
     border-radius: 12px;
@@ -541,21 +541,21 @@
     transition-duration: 180ms;
 }
 
-.islet-qa-button:hover {
+.brow-qa-button:hover {
     background-color: #F2F2F2;
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.18);
 }
 
-.islet-qa-button:active {
+.brow-qa-button:active {
     background-color: #E6E6E6;
 }
 
-.islet-qa-picker {
+.brow-qa-picker {
     spacing: 6px;
     padding: 0 2px;
 }
 
-.islet-qa-cancel {
+.brow-qa-cancel {
     background-color: rgba(255, 255, 255, 0.14);
     color: rgba(255, 255, 255, 0.9);
     border-radius: 10px;
@@ -564,34 +564,34 @@
     font-weight: 600;
 }
 
-.islet-qa-cancel:hover {
+.brow-qa-cancel:hover {
     background-color: rgba(255, 255, 255, 0.22);
 }
 
-.islet-qa-picker-scroll {
+.brow-qa-picker-scroll {
     max-height: 120px;
 }
 
-.islet-qa-picker-list {
+.brow-qa-picker-list {
     spacing: 2px;
 }
 
-.islet-qa-picker-row {
+.brow-qa-picker-row {
     background-color: transparent;
     border-radius: 8px;
     padding: 4px 6px;
     transition-duration: 120ms;
 }
 
-.islet-qa-picker-row:hover {
+.brow-qa-picker-row:hover {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
-.islet-qa-picker-icon {
+.brow-qa-picker-icon {
     margin-right: 8px;
 }
 
-.islet-qa-picker-label {
+.brow-qa-picker-label {
     font-family: "Inter", "Adwaita Sans", "Cantarell", sans-serif;
     color: #FFFFFF;
     font-size: 12px;
@@ -599,18 +599,18 @@
 }
 
 /* Settings tab — scrollable categorized list (does not cover weather/battery row) */
-.islet-settings-tab {
+.brow-settings-tab {
     padding: 0;
     background-color: #000000;
 }
 
-.islet-settings-scroll {
+.brow-settings-scroll {
     padding: 0;
     background-color: #000000;
 }
 
 /* Hide settings scrollbar / drag handle (scroll via island gesture). */
-.islet-settings-scroll StScrollBar {
+.brow-settings-scroll StScrollBar {
     min-width: 0;
     min-height: 0;
     width: 0;
@@ -620,13 +620,13 @@
     opacity: 0;
 }
 
-.islet-settings-box {
+.brow-settings-box {
     spacing: 6px;
     padding: 0 2px 4px;
     background-color: #000000;
 }
 
-.islet-settings-section {
+.brow-settings-section {
     font-family: "Inter", "Adwaita Sans", "Cantarell", sans-serif;
     color: rgba(255, 255, 255, 0.42);
     font-size: 11px;
@@ -635,29 +635,29 @@
     padding-top: 6px;
 }
 
-.islet-settings-section:first-child {
+.brow-settings-section:first-child {
     padding-top: 0;
 }
 
-.islet-settings-row {
+.brow-settings-row {
     spacing: 8px;
     x-expand: true;
 }
 
-.islet-settings-label,
-.islet-settings-value,
-.islet-settings-chip {
+.brow-settings-label,
+.brow-settings-value,
+.brow-settings-chip {
     font-family: "Inter", "Adwaita Sans", "Cantarell", sans-serif;
 }
 
-.islet-settings-label {
+.brow-settings-label {
     color: rgba(255, 255, 255, 0.78);
     font-size: 12px;
     font-weight: 600;
     letter-spacing: 0;
 }
 
-.islet-settings-value {
+.brow-settings-value {
     color: #FFFFFF;
     font-size: 12px;
     font-weight: 600;
@@ -665,11 +665,11 @@
     text-align: center;
 }
 
-.islet-settings-segment {
+.brow-settings-segment {
     spacing: 4px;
 }
 
-.islet-settings-chip {
+.brow-settings-chip {
     background-color: rgba(255, 255, 255, 0.12);
     color: rgba(255, 255, 255, 0.85);
     border-radius: 10px;
@@ -681,19 +681,19 @@
 }
 
 /* Search tab — hint + plain text, no input bar */
-.islet-search-tab {
+.brow-search-tab {
     padding: 0 2px;
     text-transform: lowercase;
 }
 
-.islet-search-field {
+.brow-search-field {
     background-color: transparent;
     border: none;
     padding: 0;
     min-height: 28px;
 }
 
-.islet-search-hint {
+.brow-search-hint {
     font-family: "Inter", "Adwaita Sans", "Cantarell", sans-serif;
     font-size: 18px;
     font-weight: 600;
@@ -704,18 +704,18 @@
     padding: 0;
 }
 
-.islet-search-cursor {
+.brow-search-cursor {
     background-color: #FFFFFF;
     border-radius: 1px;
     min-width: 2px;
     width: 2px;
 }
 
-.islet-settings-chip:hover {
+.brow-settings-chip:hover {
     background-color: rgba(255, 255, 255, 0.2);
 }
 
-.islet-settings-chip-active {
+.brow-settings-chip-active {
     background-color: #FFFFFF;
     color: #000000;
 }

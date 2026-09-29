@@ -1,7 +1,7 @@
 {
-  "name": "Islet",
-  "description": "A native Dynamic Island for GNOME Wayland.",
-  "uuid": "islet@jettakarn",
+  "name": "Brow",
+  "description": "A notch that expands into an island on GNOME Wayland.",
+  "uuid": "brow@jettakarn",
   "shell-version": [
     "45",
     "46",
@@ -9,6 +9,6 @@
     "48",
     "49"
   ],
-  "settings-schema": "org.gnome.shell.extensions.islet",
-  "url": "https://github.com/jettakarn/islet"
+  "settings-schema": "org.gnome.shell.extensions.brow",
+  "url": "https://github.com/jettakarn/brow"
 }

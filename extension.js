@@ -49,7 +49,7 @@ import {
     clearSearch,
 } from './lib/searchUi.js';
 
-export default class IsletExtension extends Extension {
+export default class BrowExtension extends Extension {
     enable() {
         this._settings = this.getSettings();
         this._monitor = Main.layoutManager.primaryMonitor;
@@ -111,7 +111,7 @@ export default class IsletExtension extends Extension {
         );
 
         this._island = new St.Bin({
-            style_class: 'islet-container',
+            style_class: 'brow-container',
             reactive: true,
             can_focus: true,
             width: initialWidth,
@@ -130,7 +130,7 @@ export default class IsletExtension extends Extension {
 
         // Quick view: time + battery
         this._quickContainer = new St.BoxLayout({
-            style_class: 'islet-quick-box',
+            style_class: 'brow-quick-box',
             vertical: false,
             x_expand: true,
             y_expand: true,
@@ -140,13 +140,13 @@ export default class IsletExtension extends Extension {
         });
         this._quickTime = new St.Label({
             text: '--:--',
-            style_class: 'islet-text',
+            style_class: 'brow-text',
             y_align: Clutter.ActorAlign.CENTER,
             x_expand: true,
         });
         this._quickBattery = new St.Label({
             text: '--%',
-            style_class: 'islet-text',
+            style_class: 'brow-text',
             y_align: Clutter.ActorAlign.CENTER,
             x_align: Clutter.ActorAlign.END,
         });
@@ -158,7 +158,7 @@ export default class IsletExtension extends Extension {
 
         // Large expanded panel
         this._largeContainer = new St.BoxLayout({
-            style_class: 'islet-large-box',
+            style_class: 'brow-large-box',
             vertical: true,
             x_expand: true,
             y_expand: true,
@@ -167,9 +167,9 @@ export default class IsletExtension extends Extension {
 
         const topRow = new St.BoxLayout({ x_expand: true, y_align: Clutter.ActorAlign.START });
         this._largeTopRow = topRow;
-        this._largeWeather = new St.Label({ text: '--°C', style_class: 'islet-weather' });
+        this._largeWeather = new St.Label({ text: '--°C', style_class: 'brow-weather' });
         const spacer = new St.Widget({ x_expand: true });
-        this._largeBattery = new St.Label({ text: '--%', style_class: 'islet-battery-pill' });
+        this._largeBattery = new St.Label({ text: '--%', style_class: 'brow-battery-pill' });
         topRow.add_child(this._largeWeather);
         topRow.add_child(spacer);
         topRow.add_child(this._largeBattery);
@@ -188,10 +188,10 @@ export default class IsletExtension extends Extension {
             y_align: Clutter.ActorAlign.CENTER,
             x_align: Clutter.ActorAlign.CENTER,
         });
-        this._largeTime = new St.Label({ text: '16:59', style_class: 'islet-large-time' });
+        this._largeTime = new St.Label({ text: '16:59', style_class: 'brow-large-time' });
         this._largeDate = new St.Label({
             text: 'Sat, Dec 27',
-            style_class: 'islet-large-date',
+            style_class: 'brow-large-date',
             x_align: Clutter.ActorAlign.CENTER,
         });
         this._overviewTab.add_child(this._largeTime);
@@ -416,9 +416,9 @@ export default class IsletExtension extends Extension {
         if (!this._largeContainer)
             return;
         if (on)
-            this._largeContainer.add_style_class_name('islet-large-box-player');
+            this._largeContainer.add_style_class_name('brow-large-box-player');
         else
-            this._largeContainer.remove_style_class_name('islet-large-box-player');
+            this._largeContainer.remove_style_class_name('brow-large-box-player');
     }
 
     _autoCollapseEnabled() {
@@ -449,7 +449,7 @@ export default class IsletExtension extends Extension {
 
         if (!this._dismissShade) {
             this._dismissShade = new St.Widget({
-                name: 'islet-dismiss-shade',
+                name: 'brow-dismiss-shade',
                 reactive: true,
                 can_focus: false,
                 opacity: 0,

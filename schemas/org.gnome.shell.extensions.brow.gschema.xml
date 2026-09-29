@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
-  <schema id="org.gnome.shell.extensions.islet" path="/org/gnome/shell/extensions/islet/">
+  <schema id="org.gnome.shell.extensions.brow" path="/org/gnome/shell/extensions/brow/">
     <key name="temperature-unit" type="s">
       <default>'celsius'</default>
       <summary>Temperature unit</summary>
