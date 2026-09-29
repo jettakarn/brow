@@ -223,6 +223,10 @@
     padding: 18px 22px 16px;
 }
 
+.islet-large-box-player {
+    padding: 28px 22px 8px;
+}
+
 /* Typography */
 .islet-text,
 .islet-weather,
@@ -271,12 +275,38 @@
     text-transform: lowercase;
 }
 
+.islet-media-compact {
+    spacing: 10px;
+}
+
+.islet-media-player-col {
+    spacing: 16px;
+}
+
+.islet-media-player-head {
+    spacing: 12px;
+}
+
+.islet-media-player-meta {
+    spacing: 2px;
+}
+
+.islet-media-player-progress {
+    spacing: 6px;
+}
+
 .islet-media-header {
     spacing: 12px;
 }
 
 .islet-media-meta {
     spacing: 2px;
+}
+
+.islet-album-art-player,
+.islet-album-art-player .islet-album-placeholder,
+.islet-album-art-player .islet-album-cover {
+    border-radius: 22px;
 }
 
 .islet-card-title,
@@ -290,6 +320,11 @@
     font-size: 15px;
     font-weight: 600;
     letter-spacing: 0;
+}
+
+.islet-card-title-player {
+    font-size: 18px;
+    font-weight: 600;
 }
 
 .islet-card-artist {
@@ -340,8 +375,17 @@
     background-color: #FFFFFF;
 }
 
+.islet-progress-block {
+    spacing: 4px;
+}
+
 .islet-progress-row {
     spacing: 10px;
+}
+
+.islet-progress-times-under {
+    spacing: 0;
+    padding: 0 1px;
 }
 
 .islet-progress-time {
@@ -371,6 +415,10 @@
 
 .islet-media-buttons-center {
     spacing: 18px;
+}
+
+.islet-media-buttons-center-player {
+    spacing: 28px;
 }
 
 .islet-media-ctrl-btn {
@@ -404,6 +452,60 @@
 
 .islet-media-output-btn {
     background-color: transparent;
+}
+
+.islet-media-volume-row {
+    spacing: 10px;
+    padding: 2px 2px 0;
+}
+
+.islet-media-volume-icon {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.islet-media-volume-hit {
+    min-height: 22px;
+}
+
+.islet-media-volume-track {
+    background-color: rgba(255, 255, 255, 0.22);
+    border-radius: 99px;
+}
+
+.islet-media-volume-fill {
+    background-color: #FFFFFF;
+    border-radius: 99px;
+}
+
+.islet-media-output-pill-wrap {
+    padding-top: 2px;
+}
+
+.islet-media-output-pill {
+    background-color: rgba(255, 255, 255, 0.14);
+    border-radius: 99px;
+    padding: 6px 14px;
+    min-height: 28px;
+}
+
+.islet-media-output-pill:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.islet-media-output-pill-inner {
+    spacing: 6px;
+}
+
+.islet-media-output-pill-icon {
+    color: #FFFFFF;
+}
+
+.islet-media-output-pill-label {
+    font-family: "Inter", "Adwaita Sans", "Cantarell", sans-serif;
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0;
 }
 
 /* Battery Pill */

@@ -17,6 +17,8 @@ import {
     EXPANDED_HEIGHT,
     MEDIA_COMPACT_WIDTH,
     MEDIA_HOVER_WIDTH,
+    MEDIA_PLAYER_WIDTH,
+    MEDIA_PLAYER_HEIGHT,
     BATTERY_BANNER_MS,
     BATTERY_BANNER_WIDTH,
     BATTERY_BANNER_HEIGHT,
@@ -61,6 +63,7 @@ export default class IsletExtension extends Extension {
 
         this._isPlaying = false;
         this._isExpanded = false;
+        this._isMediaPlayer = false;
         this._hoverActive = false;
         this._currentTab = 0;
         this._scrollAccumulator = 0;
@@ -165,6 +168,7 @@ export default class IsletExtension extends Extension {
         });
 
         const topRow = new St.BoxLayout({ x_expand: true, y_align: Clutter.ActorAlign.START });
+        this._largeTopRow = topRow;
         this._largeWeather = new St.Label({ text: '--°C', style_class: 'islet-weather' });
         const spacer = new St.Widget({ x_expand: true });
         this._largeBattery = new St.Label({ text: '--%', style_class: 'islet-battery-pill' });
@@ -355,12 +359,46 @@ export default class IsletExtension extends Extension {
             return;
         onShortcutsTabHidden(this);
         clearSearch(this);
+        if (this._isMediaPlayer) {
+            this._isMediaPlayer = false;
+            this._media?.setPlayerMode(false);
+        }
         this._isExpanded = false;
         this._currentTab = 0;
         this._hoverActive = false;
         this._setExpandedTabPickable(false);
         this._hideDismissShade();
         this._updateIslandView();
+    }
+
+    toggleMediaPlayer() {
+        if (!this._isExpanded || this._currentTab !== 1)
+            return;
+        this.setMediaPlayer(!this._isMediaPlayer);
+    }
+
+    setMediaPlayer(on) {
+        const want = !!on;
+        if (!!this._isMediaPlayer === want)
+            return;
+        if (want && (!this._isExpanded || this._currentTab !== 1))
+            return;
+        this._isMediaPlayer = want;
+        this._media?.setPlayerMode(want);
+        this._media?.setControlsReactive?.(this._isExpanded && this._currentTab === 1);
+        this._updateIslandView();
+    }
+
+    /** Large player hides the weather/battery row so the column can breathe. */
+    _syncPlayerChrome(on) {
+        if (this._largeTopRow)
+            this._largeTopRow.visible = !on;
+        if (!this._largeContainer)
+            return;
+        if (on)
+            this._largeContainer.add_style_class_name('islet-large-box-player');
+        else
+            this._largeContainer.remove_style_class_name('islet-large-box-player');
     }
 
     _autoCollapseEnabled() {
@@ -457,6 +495,8 @@ export default class IsletExtension extends Extension {
         this._focusWindowId = global.display.connect('notify::focus-window', () => {
             if (!this._island || !this._isExpanded || !this._autoCollapseEnabled())
                 return;
+            if (this._isMediaPlayer)
+                return;
 
             const focus = global.display.focus_window;
             if (focus && focus.get_window_type && focus.get_window_type() === Meta.WindowType.NORMAL)
@@ -496,6 +536,12 @@ export default class IsletExtension extends Extension {
                 if (now - (this._lastSmoothScrollMs || 0) < 80)
                     return Clutter.EVENT_STOP;
                 dx = 1;
+            }
+
+            // Large player: no tab swipe (immersive media only).
+            if (this._isMediaPlayer) {
+                this._scrollAccumulator = 0;
+                return Clutter.EVENT_STOP;
             }
 
             // Settings: vertical = scroll content only; horizontal = tab swipe.
@@ -651,6 +697,9 @@ export default class IsletExtension extends Extension {
                     // Keep picker open while assigning an app
                     if (this._shortcutsState?.pickMode)
                         return;
+                    // Large player stays until a click outside the island.
+                    if (this._isMediaPlayer)
+                        return;
                     this._collapseExpanded();
                     return;
                 }
@@ -684,7 +733,12 @@ export default class IsletExtension extends Extension {
                 this._showExpandedAtTab(startTab);
                 this._showDismissShade();
             } else {
+                if (this._isMediaPlayer) {
+                    this._isMediaPlayer = false;
+                    this._media?.setPlayerMode(false);
+                }
                 onShortcutsTabHidden(this);
+                clearSearch(this);
                 this._hideDismissShade();
             }
             this._setExpandedTabPickable(this._isExpanded);
@@ -758,8 +812,13 @@ export default class IsletExtension extends Extension {
         bannerOp = 0;
 
         if (this._isExpanded) {
-            targetWidth = 380;
-            targetHeight = EXPANDED_HEIGHT;
+            if (this._isMediaPlayer) {
+                targetWidth = MEDIA_PLAYER_WIDTH;
+                targetHeight = MEDIA_PLAYER_HEIGHT;
+            } else {
+                targetWidth = 380;
+                targetHeight = EXPANDED_HEIGHT;
+            }
             quickOp = 0;
             mediaOp = 0;
             largeOp = 255;
@@ -911,6 +970,10 @@ export default class IsletExtension extends Extension {
     }
 
     _prepareTransientHudChrome() {
+        if (this._isMediaPlayer) {
+            this._isMediaPlayer = false;
+            this._media?.setPlayerMode(false);
+        }
         this._isExpanded = false;
         this._currentTab = 0;
         this._hoverActive = false;
@@ -1024,7 +1087,8 @@ export default class IsletExtension extends Extension {
         }
     }
 
-    _setOutputVolumeRatio(ratio) {
+    _setOutputVolumeRatio(ratio, opts = {}) {
+        const showHud = opts.showHud !== false;
         const stream = this._getOutputStream();
         if (!stream || !this._mixer)
             return;
@@ -1047,7 +1111,10 @@ export default class IsletExtension extends Extension {
         } finally {
             this._volumeApplying = false;
         }
-        this._showVolumeHud();
+        if (showHud)
+            this._showVolumeHud();
+        else
+            this._media?.syncPlayerVolumeUi?.();
     }
 
     _disconnectVolumeSink() {
@@ -1081,6 +1148,10 @@ export default class IsletExtension extends Extension {
     _onVolumeChanged() {
         if (!this._island || this._volumeApplying)
             return;
+        if (this._isMediaPlayer) {
+            this._media?.syncPlayerVolumeUi?.();
+            return;
+        }
         this._showVolumeHud();
     }
 

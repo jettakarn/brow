@@ -6,7 +6,7 @@ A native Dynamic Island–style peninsula for GNOME Shell on Wayland. Built as a
 
 - **Peninsula island** — flush to the top bezel, expands on hover/click
 - **Overview** — clock, date, weather, battery
-- **Media card** — album art, title/artist, progress, prev / play-pause / next, and an output button that opens GNOME Sound settings
+- **Media card** — album art, title/artist, progress, prev / play-pause / next, and an output button that opens GNOME Sound settings; click the album art to morph into a tall large player (volume slider + Sound pill), click again to return
 - **Now playing peek** — while music plays, the compact island shows album art on the left and an animated spectrum on the right (colors sampled from the cover)
 - **Battery banners** — peninsula expands left/right (same style as hover) for ~3 seconds, then shrinks back:
   - **Charging** (green) when power is connected
@@ -66,7 +66,8 @@ Then **log out and log in** (or restart GNOME Shell on Xorg with Alt+F2 → `r`)
 | Battery ≤ 20% (on battery) | **Low Battery** banner (~3s), then default island |
 | Volume up / down / mute | **Volume** HUD (~2.5s); preempts battery banner if showing; drag the bar to set level |
 | Fingerprint verify (lock / Settings) | Experimental square scan → check or shake (clears volume/battery HUDs) |
-| Media → output icon | Opens **Settings → Sound** |
+| Media → album art | Expand / collapse the tall large player. While it is open, click outside the island to close it |
+| Media → output icon / Sound pill | Opens **Settings → Sound** |
 | Media → transport | `playerctl` previous / play-pause / next |
 | Shortcuts → short-press | Launch assigned app |
 | Shortcuts → long-press | Pick a different installed app for that slot |
