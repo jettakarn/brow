@@ -1,104 +1,95 @@
 # Brow
 
-A notch that expands into an island for GNOME Shell on Wayland. Resting height matches the top bar; hover or click opens the island. Built as a GJS/Clutter extension (not Electron), so it stays interactive on top of the shell with a small footprint.
+[Install](#install) • [Usage](#usage) • [Settings](#settings)
 
-## Features
+![Supports GNOME Shell 45+](https://img.shields.io/badge/Supports-GNOME_Shell_45+-blueviolet.svg?style=flat-square&logo=gnome&logoColor=white)
 
-- **Notch** — flush to the top bezel and as tall as the GNOME top bar; expands into an island on hover/click
-- **Overview** — clock, date, weather, battery
-- **Media card** — album art, title/artist, progress, prev / play-pause / next, and an output button that opens GNOME Sound settings; click the album art to morph into a tall large player (volume slider + Sound pill), click again to return
-- **Now playing peek** — while music plays, the compact island shows album art on the left and an animated spectrum on the right (colors sampled from the cover)
-- **Battery banners** — peninsula expands left/right (same style as hover) for ~3 seconds, then shrinks back:
-  - **Charging** (green) when power is connected
-  - **Low battery** (red) when level drops to **20%** or below while discharging (once per drop; resets after charging above 20%)
-- **Volume HUD** — when system output volume changes, the island expands into an Apple-style bar (icon + “Volume” + thin level track); drag the track to set volume; holds ~2.5s then returns
-- **HUD priority queue** — fingerprint auth > volume > battery; a higher overlay preempts a lower one, and a preempted timed HUD resumes if it has not expired (auth clears timed HUDs)
-- **Experimental: fingerprint auth island** — when fprintd starts verification (lock unlock / Settings test), the island morphs into a rounded square with a mint scan frame, breathing green rim/edge, and fingerprint; success spins to a check, failure shakes; falls back to the default island on password / session end
-- **Search** — hint “address or search”; Enter opens the default browser via Google for queries, then the island collapses and clears
-- **Shortcuts** — four app chips; short-press launches, long-press reassigns from installed apps
-- **In-island settings** — temperature, clock, volume HUD, battery banners, low-battery %, fingerprint island
-- **Auto-collapse** when the pointer leaves the island, you click/tap outside it, or another window takes focus
-- **Circular tab swipe** — scroll/swipe wraps Overview → Media → Search → Shortcuts → Settings → Overview
+A notch on the GNOME top bar. Hover or click and it opens into an island.
 
-## Requirements
+![Brow](preview.gif)
 
-- GNOME Shell **45+**
+---
+
+### Table of Contents
+
+- [Introduction](#introduction)
+- [Features](#features)
+- [Prerequisites](#prerequisites)
+- [Install](#install)
+- [Usage](#usage)
+- [Settings](#settings)
+
+# Introduction
+
+The top bar already marks the top of the screen. Brow sits in the middle of it, flush with the bezel, and only as tall as that bar. At rest it is a notch. Hover or a click opens it into an island. The pointer leaving, a click outside, or another window taking focus closes it again.
+
+Built as a GJS/Clutter extension, so it stays on top of the shell. It is not a separate window.
+
+UUID: `brow@jettakarn`.
+
+# Features
+
+- A notch the height of the GNOME top bar. Hover peeks. Click opens the island.
+- Overview: clock, date, weather, and battery.
+- Media: album art, title, artist, a seekable progress bar, and previous / play-pause / next. The output button opens Sound settings. Click the album art for a tall player, and click it again to return.
+- While music plays, the closed island shows the cover on the left and a spectrum on the right, tinted from the art.
+- Charging and low-battery banners. Each holds for about three seconds, then the island shrinks back.
+- A volume bar when the system output volume changes. Drag the track to set the level. It holds for about two and a half seconds.
+- Search. Type an address or a query and press Enter. The default browser opens, and the island closes and clears.
+- Four shortcut chips. A short press launches the app. A long press picks a different installed app.
+- Settings live in the island: temperature, clock, and the overlays below.
+- Scroll or swipe cycles the tabs and wraps around: Overview, Media, Search, Shortcuts, Settings.
+- Experimental fingerprint island. When fprintd starts a verify, the island becomes a rounded square with a breathing scan. A match becomes a check. A miss shakes. Switching to a password returns to the notch.
+
+Overlays do not stack. Fingerprint auth takes the island from the volume bar, and the volume bar takes it from a battery banner. A timed banner that was interrupted comes back if its time has not run out. Auth clears the timed ones.
+
+# Prerequisites
+
+- GNOME Shell 45 or newer
 - [`playerctl`](https://github.com/altdesktop/playerctl) for media metadata and controls
-- Network access for weather (IP geo + [Open-Meteo](https://open-meteo.com/))
-- Optional: `fprintd` (or compatible `open-fprintd`) + enrolled fingers for the experimental fingerprint island
+- Network access for weather (IP geolocation and [Open-Meteo](https://open-meteo.com/))
+- Optional: `fprintd` (or a compatible `open-fprintd`) and an enrolled finger, for the fingerprint island
 
-## Experimental: fingerprint island
+The fingerprint island only runs inside the user session. The GDM greeter is out of scope.
 
-On devices with a fingerprint reader (e.g. ThinkPad T480), Brow listens **passively** to `net.reactivated.Fprint` `VerifyFingerSelected` / `VerifyStatus` (no Claim). When unlock or another app starts verification:
+# Install
 
-1. Island shrinks horizontally and grows into a square
-2. Fingerprint + mint focus frame + green island edge breathe; thin green scan ring
-3. **Match** → rim spin → green check → brief hold → default island
-4. **No match** → fingerprint shakes, then returns to default (or when the lock UI switches to password)
-
-GDM greeter login fingerprint is out of scope (runs outside the user session).
-
-## Install
-
-UUID: `brow@jettakarn`
-
-```bash
-# From this repo
+```sh
+git clone https://github.com/jettakarn/brow.git
+cd brow
 mkdir -p ~/.local/share/gnome-shell/extensions
-rsync -a --delete \
-  ./ ~/.local/share/gnome-shell/extensions/brow@jettakarn/ \
-  --exclude .git --exclude .cursor
-
-glib-compile-schemas ~/.local/share/gnome-shell/extensions/brow@jettakarn/schemas/
+ln -sfn "$(pwd)" ~/.local/share/gnome-shell/extensions/brow@jettakarn
+glib-compile-schemas ~/.local/share/gnome-shell/extensions/brow@jettakarn/schemas
+gnome-extensions enable brow@jettakarn
 ```
 
-Then **log out and log in** (or restart GNOME Shell on Xorg with Alt+F2 → `r`), and enable **Brow** in the Extensions app / Extension Manager.
+On Wayland, log out and back in once so the shell can see the new extension. After that, disable and enable Brow to pick up code changes.
 
-## Usage
+# Usage
 
 | Action | Effect |
 |--------|--------|
-| Hover | Peek clock/battery, or album art + spectrum while playing |
-| Click | Expand / collapse the island (playing → opens **Media** tab first) |
-| Scroll / swipe while expanded | Cycle tabs (Overview → Media → Search → Shortcuts → Settings) |
-| Search tab → type + Enter | Open URL or Google search in the default browser; island closes and clears |
-| Plug in power | **Charging** banner (~3s), then default island |
-| Battery ≤ 20% (on battery) | **Low Battery** banner (~3s), then default island |
-| Volume up / down / mute | **Volume** HUD (~2.5s); preempts battery banner if showing; drag the bar to set level |
-| Fingerprint verify (lock / Settings) | Experimental square scan → check or shake (clears volume/battery HUDs) |
-| Media → album art | Expand / collapse the tall large player. While it is open, click outside the island to close it |
-| Media → output icon / Sound pill | Opens **Settings → Sound** |
-| Media → transport | `playerctl` previous / play-pause / next |
-| Shortcuts → short-press | Launch assigned app |
-| Shortcuts → long-press | Pick a different installed app for that slot |
-| Settings → Volume / Battery | Toggle volume HUD and battery banners |
-| Settings → Low battery | Low-battery banner threshold (15 / 20 / 25%) |
-| Settings → Fingerprint | Toggle experimental fingerprint island |
+| Hover | Peek the clock and battery, or the cover and spectrum while music plays |
+| Click | Open or close the island. If music is playing, it opens on Media |
+| Scroll or swipe while open | Cycle tabs: Overview, Media, Search, Shortcuts, Settings |
+| Search, then Enter | Open the address, or a Google search, in the default browser. The island closes and clears |
+| Plug in power | Green charging banner for about 3 seconds |
+| Battery at or below the low threshold, while discharging | Red low-battery banner for about 3 seconds, once per drop |
+| Volume up, down, or mute | Volume bar for about 2.5 seconds. Drag the track to set the level |
+| Fingerprint verify | Square scan, then a check or a shake |
+| Media, album art | Open or close the tall player. While it is open, a click outside closes the island. Moving the pointer away does not |
+| Media, output icon or Sound | Open Settings, Sound |
+| Media, transport | Previous, play-pause, or next through `playerctl` |
+| Shortcuts, short press | Launch the assigned app |
+| Shortcuts, long press | Pick a different installed app for that chip |
 
-## Project layout
+# Settings
 
-```
-brow-gnome-extension/
-  extension.js          # Extension class: island shell, hover, gestures, tabs
-  stylesheet.css
-  metadata.json
-  LICENSE
-  fonts/
-  schemas/
-  lib/
-    constants.js        # Pads, sizes, tab count, intervals
-    weather.js          # Soup + Open-Meteo / IP geo
-    media.js            # playerctl, art, media card UI + spectrum + progress
-    batteryBannerUi.js  # Charging / low-battery peninsula banners
-    volumeHudUi.js      # Apple-style volume HUD + drag-to-set
-    hudQueue.js         # Priority queue: auth > volume > battery
-    searchUi.js         # Address / web search entry tab
-    fingerprintAuth.js  # Passive fprintd Verify* monitor (experimental)
-    fingerprintUi.js    # Auth square overlay + animations
-    shortcutsUi.js      # Customizable shortcut chips + in-island app picker
-    settingsUi.js       # In-island settings rows
-```
+Settings are a tab in the island, not a separate preferences window.
 
-## License
-
-See [LICENSE](LICENSE).
+- **Temperature** is Celsius or Fahrenheit. Celsius is the default.
+- **Clock** is 24-hour or 12-hour.
+- **Volume** shows or hides the volume bar.
+- **Battery** shows or hides the charging and low-battery banners.
+- **Low battery** is 15%, 20%, or 25%. The default is 20%. The banner appears once when the level drops to that threshold while discharging, and it resets after charging above it.
+- **Fingerprint** turns the experimental island on or off.
