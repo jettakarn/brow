@@ -1,6 +1,6 @@
 # Brow
 
-[Install](#install) • [Usage](#usage) • [Settings](#settings)
+[Install](#install) • [Usage](#usage) • [Settings](#settings) • [LLM policy](#llm-policy)
 
 ![Supports GNOME Shell 45+](https://img.shields.io/badge/Supports-GNOME_Shell_45+-blueviolet.svg?style=flat-square&logo=gnome&logoColor=white)
 
@@ -18,6 +18,7 @@ A notch on the GNOME top bar. Hover or click and it opens into an island.
 - [Install](#install)
 - [Usage](#usage)
 - [Settings](#settings)
+- [LLM policy](#llm-policy)
 
 # Introduction
 
@@ -93,3 +94,9 @@ Settings are a tab in the island, not a separate preferences window.
 - **Battery** shows or hides the charging and low-battery banners.
 - **Low battery** is 15%, 20%, or 25%. The default is 20%. The banner appears once when the level drops to that threshold while discharging, and it resets after charging above it.
 - **Fingerprint** turns the experimental island on or off.
+
+# LLM policy
+
+This repository was developed with AI. The extension and this README were written with an AI coding assistant, then reviewed and kept by the maintainer.
+
+AI-assisted contributions are fine. Say so in the pull request, keep the change small enough to review, and answer questions about it yourself.
