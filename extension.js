@@ -1,7 +1,6 @@
 import St from 'gi://St';
 import Clutter from 'gi://Clutter';
 import GLib from 'gi://GLib';
-import Gio from 'gi://Gio';
 import Soup from 'gi://Soup';
 import UPowerGlib from 'gi://UPowerGlib';
 import Meta from 'gi://Meta';

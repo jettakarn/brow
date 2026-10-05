@@ -160,17 +160,6 @@
     background-color: transparent;
 }
 
-.brow-auth-spin {
-    /* Same diameter as .brow-auth-ring — bright arc for 3D spin */
-    border: 2.5px solid transparent;
-    border-top-color: #B8FFA8;
-    border-right-color: rgba(124, 255, 107, 0.55);
-    border-bottom-color: rgba(124, 255, 107, 0.12);
-    border-left-color: transparent;
-    border-radius: 99px;
-    background-color: transparent;
-}
-
 .brow-auth-frame {
     padding: 0;
 }
