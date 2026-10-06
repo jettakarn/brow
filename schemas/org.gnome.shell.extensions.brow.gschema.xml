@@ -24,7 +24,12 @@
     <key name="shortcut-apps" type="as">
       <default>['org.gnome.Terminal.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Calculator.desktop', 'firefox.desktop']</default>
       <summary>Shortcut app desktop IDs</summary>
-      <description>Four installed application .desktop IDs for the Shortcuts tab. Long-press a chip in the island to reassign.</description>
+      <description>Unused. Kept so existing installations still load. Honeycomb dots use honeycomb-items.</description>
+    </key>
+    <key name="honeycomb-items" type="s">
+      <default>'[{"type":"url","url":"https://www.google.com"},{"type":"url","url":"https://www.youtube.com"},{"type":"url","url":"https://mail.google.com"},{"type":"url","url":"https://maps.google.com"},{"type":"url","url":"https://drive.google.com"},{"type":"url","url":"https://github.com"},{"type":"url","url":"https://www.wikipedia.org"},{"type":"url","url":"https://www.reddit.com"},{"type":"url","url":"https://x.com"},{"type":"url","url":"https://www.instagram.com"},{"type":"url","url":"https://www.facebook.com"},{"type":"url","url":"https://www.netflix.com"},{"type":"url","url":"https://open.spotify.com"},{"type":"url","url":"https://discord.com"},{"type":"url","url":"https://www.twitch.tv"},{"type":"url","url":"https://www.amazon.com"},{"type":"url","url":"https://chatgpt.com"},{"type":"url","url":"https://www.notion.so"},{"type":"url","url":"https://stackoverflow.com"},{"type":"url","url":"https://www.linkedin.com"}]'</default>
+      <summary>Honeycomb dots</summary>
+      <description>JSON list of shortcut dots. Each entry is an app ({"type":"app","app":"id.desktop"}) or a website ({"type":"url","url":"https://…"}).</description>
     </key>
     <key name="show-volume-hud" type="b">
       <default>true</default>

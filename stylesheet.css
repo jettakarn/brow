@@ -223,8 +223,7 @@
 .brow-large-date,
 .brow-media-title,
 .brow-media-artist,
-.brow-battery-pill,
-.brow-qa-button {
+.brow-battery-pill {
     font-family: "Inter", "Adwaita Sans", "Cantarell", sans-serif;
 }
 
@@ -261,7 +260,6 @@
 .brow-media-tab {
     spacing: 10px;
     padding: 0 2px;
-    text-transform: lowercase;
 }
 
 .brow-media-compact {
@@ -508,83 +506,20 @@
     padding: 2px 8px;
 }
 
-/* Quick Apps Shortcuts */
-.brow-qa-box {
-    spacing: 8px;
-    text-transform: lowercase;
+/* Honeycomb shortcuts */
+.brow-hex-tab {
+    padding: 0;
 }
 
-.brow-qa-chips {
-    spacing: 10px;
+.brow-hex-dot {
+    background-color: rgba(255, 255, 255, 0.06);
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
 }
 
-.brow-qa-button {
-    background-color: #FFFFFF;
-    color: #000000;
-    border-radius: 12px;
-    padding: 8px 14px;
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0;
-    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.12);
-    transition-duration: 180ms;
-}
-
-.brow-qa-button:hover {
-    background-color: #F2F2F2;
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.18);
-}
-
-.brow-qa-button:active {
-    background-color: #E6E6E6;
-}
-
-.brow-qa-picker {
-    spacing: 6px;
-    padding: 0 2px;
-}
-
-.brow-qa-cancel {
-    background-color: rgba(255, 255, 255, 0.14);
-    color: rgba(255, 255, 255, 0.9);
-    border-radius: 10px;
-    padding: 4px 12px;
-    font-size: 12px;
-    font-weight: 600;
-}
-
-.brow-qa-cancel:hover {
-    background-color: rgba(255, 255, 255, 0.22);
-}
-
-.brow-qa-picker-scroll {
-    max-height: 120px;
-}
-
-.brow-qa-picker-list {
-    spacing: 2px;
-}
-
-.brow-qa-picker-row {
-    background-color: transparent;
-    border-radius: 8px;
-    padding: 4px 6px;
-    transition-duration: 120ms;
-}
-
-.brow-qa-picker-row:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-.brow-qa-picker-icon {
-    margin-right: 8px;
-}
-
-.brow-qa-picker-label {
-    font-family: "Inter", "Adwaita Sans", "Cantarell", sans-serif;
-    color: #FFFFFF;
-    font-size: 12px;
-    font-weight: 600;
+.brow-hex-dot-icon {
+    padding: 0;
+    color: #ffffff;
 }
 
 /* Settings tab — scrollable categorized list (does not cover weather/battery row) */

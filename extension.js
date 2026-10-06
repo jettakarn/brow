@@ -48,6 +48,17 @@ import {
     clearSearch,
 } from './lib/searchUi.js';
 
+function _raiseTab(tab) {
+    const parent = tab?.get_parent?.();
+    if (!parent?.set_child_above_sibling)
+        return;
+    try {
+        parent.set_child_above_sibling(tab, null);
+    } catch (e) {
+        // ignore
+    }
+}
+
 export default class BrowExtension extends Extension {
     enable() {
         this._settings = this.getSettings();
@@ -307,7 +318,7 @@ export default class BrowExtension extends Extension {
             this._updateTime();
             syncSettingsUi(this);
         });
-        bind('shortcut-apps', () => {
+        bind('honeycomb-items', () => {
             rebuildShortcuts(this);
         });
         bind('show-volume-hud', () => {
@@ -592,10 +603,10 @@ export default class BrowExtension extends Extension {
             this._scrollAccumulator += dx;
 
             if (this._scrollAccumulator > 1.2) {
-                this._switchTab((this._currentTab + 1) % TAB_COUNT);
+                this._switchTab(this._adjacentTab(1));
                 this._scrollAccumulator = 0;
             } else if (this._scrollAccumulator < -1.2) {
-                this._switchTab((this._currentTab - 1 + TAB_COUNT) % TAB_COUNT);
+                this._switchTab(this._adjacentTab(-1));
                 this._scrollAccumulator = 0;
             }
 
@@ -616,10 +627,28 @@ export default class BrowExtension extends Extension {
         ];
     }
 
+    _adjacentTab(direction) {
+        const order = this._isPlaying ? [0, 1, 2, 3, 4] : [0, 2, 3, 4];
+        const pos = order.indexOf(this._currentTab);
+        const i = pos < 0 ? 0 : pos;
+        return order[(i + direction + order.length) % order.length];
+    }
+
+    _onPlaybackChanged() {
+        if (this._isPlaying)
+            return;
+        if (this._isMediaPlayer)
+            this.setMediaPlayer(false);
+        if (this._isExpanded && this._currentTab === 1)
+            this._switchTab(0);
+    }
+
     _switchTab(index) {
         if (!this._island || this._currentTab === index)
             return;
         if (index < 0 || index >= TAB_COUNT)
+            return;
+        if (index === 1 && !this._isPlaying)
             return;
 
         const from = this._currentTab;
@@ -649,19 +678,39 @@ export default class BrowExtension extends Extension {
         tabs.forEach((tab, i) => {
             if (!tab)
                 return;
+            tab.remove_all_transitions();
             tab.reactive = i === index;
             if (i === index) {
+                // Settings is an opaque black sheet added above the other tabs.
+                // Keep the page we are opening on top so that sheet cannot cover it.
+                _raiseTab(tab);
                 tab.translation_x = goingForward ? 50 : -50;
-                tab.ease({ opacity: 255, translation_x: 0, duration, mode });
+                tab.opacity = 0;
+                tab.ease({
+                    opacity: 255,
+                    translation_x: 0,
+                    duration,
+                    mode,
+                    onComplete: () => {
+                        if (this._currentTab !== i)
+                            return;
+                        tab.opacity = 255;
+                        tab.translation_x = 0;
+                    },
+                });
             } else if (i === from) {
                 tab.ease({
                     opacity: 0,
                     translation_x: goingForward ? -50 : 50,
                     duration,
                     mode,
+                    onComplete: () => {
+                        if (this._currentTab === i)
+                            return;
+                        tab.opacity = 0;
+                    },
                 });
             } else {
-                tab.remove_all_transitions();
                 tab.opacity = 0;
                 tab.translation_x = goingForward ? 50 : -50;
             }
@@ -713,9 +762,6 @@ export default class BrowExtension extends Extension {
                 // Expanded: leave immediately so moving back to a window collapses
                 // before the click, and the app receives the interaction.
                 if (this._isExpanded && this._autoCollapseEnabled()) {
-                    // Keep picker open while assigning an app
-                    if (this._shortcutsState?.pickMode)
-                        return;
                     // Large player stays until a click outside the island.
                     if (this._isMediaPlayer)
                         return;
@@ -741,9 +787,6 @@ export default class BrowExtension extends Extension {
             if (!this._island)
                 return Clutter.EVENT_STOP;
             if (this._isBatteryBanner || this._isVolumeHud || this._isFingerprintAuth)
-                return Clutter.EVENT_STOP;
-            // Long-press opens app picker; the release must not toggle expand
-            if (this._shortcutsState?.pickMode)
                 return Clutter.EVENT_STOP;
             this._isExpanded = !this._isExpanded;
             if (this._isExpanded) {
@@ -772,7 +815,9 @@ export default class BrowExtension extends Extension {
         tabs.forEach((tab, i) => {
             if (!tab)
                 return;
+            tab.remove_all_transitions();
             if (i === startTab) {
+                _raiseTab(tab);
                 tab.opacity = 255;
                 tab.translation_x = 0;
             } else {
