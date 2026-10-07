@@ -1,6 +1,6 @@
 # Brow
 
-[Install](#install) • [Usage](#usage) • [Settings](#settings) • [LLM policy](#llm-policy)
+[中文](README.zh-TW.md) • [Install](#install) • [Usage](#usage) • [Settings](#settings) • [LLM policy](#llm-policy)
 
 ![Supports GNOME Shell 45+](https://img.shields.io/badge/Supports-GNOME_Shell_45+-blueviolet.svg?style=flat-square&logo=gnome&logoColor=white)
 
@@ -25,6 +25,8 @@ A notch on the GNOME top bar. Hover or click and it opens into an island.
 The top bar already marks the top of the screen. Brow sits in the middle of it, flush with the bezel, and only as tall as that bar. At rest it is a notch. Hover or a click opens it into an island. The pointer leaving, a click outside, or another window taking focus closes it again.
 
 Built as a GJS/Clutter extension, so it stays on top of the shell. It is not a separate window.
+
+The interface and features reference [Ripple](https://github.com/TopMyster/Ripple).
 
 UUID: `brow@jettakarn`.
 
