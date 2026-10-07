@@ -6,7 +6,7 @@
 
 A notch on the GNOME top bar. Hover or click and it opens into an island.
 
-![Brow](main.gif)
+![Brow](previews/main.gif)
 
 ---
 
@@ -44,19 +44,19 @@ The media page is on screen only while something is playing. It shows album art,
 
 While music plays, the closed island shows the cover on the left and a spectrum on the right, tinted from the art.
 
-![Music](music.gif)
+![Music](previews/music.gif)
 
 ### Volume
 
 A volume bar appears when the system output volume changes. Drag the track to set the level. It holds for about two and a half seconds.
 
-![Volume](volume.gif)
+![Volume](previews/volume.gif)
 
 ### Battery
 
 Charging and low-battery banners. Each holds for about three seconds, then the island shrinks back.
 
-![Charging](charging.gif)
+![Charging](previews/charging.gif)
 
 ### Shortcuts
 
@@ -70,7 +70,7 @@ Experimental. When fprintd starts a verify, the island becomes a rounded square.
 
 The fingerprint island only runs inside the user session. The GDM greeter is out of scope.
 
-![Fingerprint](fingerprint.gif)
+![Fingerprint](previews/fingerprint.gif)
 
 # Prerequisites
 

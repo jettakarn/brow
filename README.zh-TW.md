@@ -6,7 +6,7 @@
 
 GNOME 頂端列上的一個凹槽。滑鼠移上去或點一下，它會展開成一座島。
 
-![Brow](main.gif)
+![Brow](previews/main.gif)
 
 ---
 
@@ -44,19 +44,19 @@ UUID：`brow@jettakarn`。
 
 播放時，收起的島左邊是封面，右邊是從封面取色的頻譜。
 
-![Music](music.gif)
+![Music](previews/music.gif)
 
 ### 音量
 
 系統輸出音量改變時出現音量條。拖曳軌道可調整大小。大約停留兩秒半。
 
-![Volume](volume.gif)
+![Volume](previews/volume.gif)
 
 ### 電池
 
 充電與低電量橫幅。各自停留約三秒，然後島縮回去。
 
-![Charging](charging.gif)
+![Charging](previews/charging.gif)
 
 ### 快捷
 
@@ -70,7 +70,7 @@ UUID：`brow@jettakarn`。
 
 指紋島只在使用者工作階段裡運作，不包含 GDM 登入畫面。
 
-![Fingerprint](fingerprint.gif)
+![Fingerprint](previews/fingerprint.gif)
 
 # 需求
 
