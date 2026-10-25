@@ -62,12 +62,16 @@ function _raiseTab(tab) {
 export default class BrowExtension extends Extension {
     enable() {
         this._settings = this.getSettings();
-        this._monitor = Main.layoutManager.primaryMonitor;
-        this._centerX = this._monitor.x + (this._monitor.width / 2);
+        this._monitor = null;
+        this._centerX = 0;
+        this._originY = 0;
+        this._monitorsChangedId = 0;
 
         const initialWidth = 170;
         const initialHeight = this._readPanelHeight();
         const topMargin = 0;
+        this._topMargin = topMargin;
+        this._syncMonitorGeometry();
 
         this._isPlaying = false;
         this._isExpanded = false;
@@ -117,7 +121,7 @@ export default class BrowExtension extends Extension {
         });
         this._hitArea.set_position(
             this._centerX - (initialWidth / 2) - HIT_PAD_X,
-            topMargin
+            this._originY
         );
 
         this._island = new St.Bin({
@@ -262,6 +266,29 @@ export default class BrowExtension extends Extension {
         this._setExpandedTabPickable(false);
         this._media.showPlaceholder();
         this._panelHeightId = Main.panel?.connect?.('notify::height', () => this._onPanelHeightChanged()) ?? 0;
+        this._monitorsChangedId = Main.layoutManager.connect(
+            'monitors-changed',
+            () => this._onMonitorsChanged()
+        );
+    }
+
+    _syncMonitorGeometry() {
+        const monitor = Main.layoutManager.primaryMonitor;
+        if (!monitor)
+            return;
+        this._monitor = monitor;
+        this._centerX = monitor.x + (monitor.width / 2);
+        this._originY = monitor.y + (this._topMargin || 0);
+    }
+
+    _onMonitorsChanged() {
+        this._syncMonitorGeometry();
+        this._animTarget = null;
+        if (this._dismissShade?.visible && this._monitor) {
+            this._dismissShade.set_position(this._monitor.x, this._monitor.y);
+            this._dismissShade.set_size(this._monitor.width, this._monitor.height);
+        }
+        this._updateIslandView();
     }
 
     _readPanelHeight() {
@@ -933,6 +960,8 @@ export default class BrowExtension extends Extension {
             authOpacity,
             volumeOpacity,
             topMargin: this._topMargin,
+            centerX: this._centerX,
+            originY: this._originY,
         };
         if (this._animTarget &&
             this._animTarget.targetWidth === next.targetWidth &&
@@ -943,7 +972,9 @@ export default class BrowExtension extends Extension {
             this._animTarget.bannerOpacity === next.bannerOpacity &&
             this._animTarget.authOpacity === next.authOpacity &&
             this._animTarget.volumeOpacity === next.volumeOpacity &&
-            this._animTarget.topMargin === next.topMargin) {
+            this._animTarget.topMargin === next.topMargin &&
+            this._animTarget.centerX === next.centerX &&
+            this._animTarget.originY === next.originY) {
             return;
         }
         this._animTarget = next;
@@ -951,7 +982,7 @@ export default class BrowExtension extends Extension {
         const hitW = Math.round(targetWidth + HIT_PAD_X * 2);
         const hitH = Math.round(targetHeight + HIT_PAD_BOTTOM);
         const hitX = Math.round(this._centerX - (targetWidth / 2) - HIT_PAD_X);
-        const hitY = Math.round(this._topMargin);
+        const hitY = Math.round(this._originY);
 
         this._hitArea.ease({
             width: hitW,
@@ -1496,6 +1527,15 @@ export default class BrowExtension extends Extension {
 
     disable() {
         this._clearHoverLeaveTimeout();
+
+        if (this._monitorsChangedId) {
+            try {
+                Main.layoutManager.disconnect(this._monitorsChangedId);
+            } catch (e) {
+                // ignore
+            }
+            this._monitorsChangedId = 0;
+        }
 
         if (this._panelHeightId && Main.panel) {
             try {
