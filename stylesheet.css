@@ -197,6 +197,11 @@
     color: #7CFF6B;
 }
 
+/* Howdy face unlock — Glance scan media fills the peninsula */
+.brow-howdy-root {
+    padding: 0;
+}
+
 /* Quick View Boxes */
 .brow-quick-box {
     padding: 0 16px;

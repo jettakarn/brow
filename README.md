@@ -36,7 +36,7 @@ UUID: `brow@jettakarn`.
 - Overview: clock, date, weather, and battery.
 - Search. Type an address or a query and press Enter. The default browser opens, and the island closes and clears.
 - Scroll or swipe cycles the tabs and wraps around. While audio is playing the order is Overview, Media, Search, Shortcuts, Settings. Otherwise Media is skipped.
-- Overlays do not stack. Fingerprint auth takes the island from the volume bar, and the volume bar takes it from a battery banner. A timed banner that was interrupted comes back if its time has not run out. Auth clears the timed ones.
+- Overlays do not stack. Fingerprint auth and Howdy face unlock share one auth slot and take the island from the volume bar. The volume bar takes it from a battery banner. A timed banner that was interrupted comes back if its time has not run out. Auth clears the timed ones.
 
 ### Media
 
@@ -72,12 +72,19 @@ The fingerprint island only runs inside the user session. The GDM greeter is out
 
 ![Fingerprint](previews/fingerprint.gif)
 
+### Face unlock
+
+Experimental. When Howdy opens the camera for a facial authentication in this session, the island opens to the same square as fingerprint verify and shows Glance's blue scan face, breathing. A match then plays `unlockanimation` at 0.75× speed, and a miss plays `unsuccessfulunlockanimation` at 0.75× speed. The island shrinks back after the clip.
+
+Howdy still does the camera check. Brow only watches `pam_howdy` in the system journal. `howdy test` does not go through PAM, so it does not open the island. The GDM greeter is out of scope. If a fingerprint verify is already on screen, Howdy waits.
+
 # Prerequisites
 
 - GNOME Shell 45 or newer
 - [`playerctl`](https://github.com/altdesktop/playerctl) for media metadata and controls
 - Network access for weather (IP geolocation and [Open-Meteo](https://open-meteo.com/)) and for website icons
 - Optional: `fprintd` (or a compatible `open-fprintd`) and an enrolled finger, for the fingerprint island
+- Optional: [Howdy](https://github.com/boltgolt/howdy) (`pam_howdy`) for the face-unlock island. Brow does not enroll a face or open the camera.
 
 # Install
 
@@ -104,6 +111,7 @@ On Wayland, log out and back in once so the shell can see the new extension. Aft
 | Battery at or below the low threshold, while discharging | Red low-battery banner for about 3 seconds, once per drop |
 | Volume up, down, or mute | Volume bar for about 2.5 seconds. Drag the track to set the level |
 | Fingerprint verify | Square scan, then a check drawn left to right, or a shake |
+| Howdy verify | Island opens to the fingerprint square with the breathing scan face, then the 0.75× success or failure clip |
 | Media, album art | Open or close the tall player. While it is open, a click outside closes the island. Moving the pointer away does not |
 | Media, output icon or Sound | Open Settings, Sound |
 | Media, transport | Previous, play-pause, or next through `playerctl` |
@@ -112,7 +120,7 @@ On Wayland, log out and back in once so the shell can see the new extension. Aft
 
 # Settings
 
-Display, volume, battery, and fingerprint are a tab in the island.
+Display, volume, battery, fingerprint, and Howdy are a tab in the island.
 
 - **Temperature** is Celsius or Fahrenheit. Celsius is the default.
 - **Clock** is 24-hour or 12-hour.
@@ -120,6 +128,7 @@ Display, volume, battery, and fingerprint are a tab in the island.
 - **Battery** shows or hides the charging and low-battery banners.
 - **Low battery** is 15%, 20%, or 25%. The default is 20%. The banner appears once when the level drops to that threshold while discharging, and it resets after charging above it.
 - **Fingerprint** turns the experimental island on or off.
+- **Howdy** turns the face-unlock island on or off.
 
 The honeycomb is a preferences page. Open **Extensions**, choose **Brow**, then **Honeycomb**. Add, remove, and reorder dots. Each one is an application or a website.
 

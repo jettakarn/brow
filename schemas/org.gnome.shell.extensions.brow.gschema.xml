@@ -52,5 +52,10 @@
       <summary>Fingerprint auth island</summary>
       <description>Experimental: morph the island during fprintd verification</description>
     </key>
+    <key name="howdy-island" type="b">
+      <default>true</default>
+      <summary>Howdy face-unlock island</summary>
+      <description>Experimental: morph the island while pam_howdy is authenticating. The extension only watches the journal.</description>
+    </key>
   </schema>
 </schemalist>
