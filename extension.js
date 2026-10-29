@@ -77,6 +77,7 @@ export default class BrowExtension extends Extension {
         this._isExpanded = false;
         this._isMediaPlayer = false;
         this._hoverActive = false;
+        this._tookIslandKeyFocus = false;
         this._currentTab = 0;
         this._scrollAccumulator = 0;
         this._hoverLeaveTimeout = null;
@@ -532,7 +533,16 @@ export default class BrowExtension extends Extension {
     _setupAutoCollapse() {
         // Shell chrome (panel, etc.)
         this._stageCaptureId = global.stage.connect('captured-event', (_actor, event) => {
-            if (!this._island || !this._isExpanded || !this._autoCollapseEnabled())
+            if (!this._island)
+                return Clutter.EVENT_PROPAGATE;
+
+            if (event.type() === Clutter.EventType.KEY_PRESS) {
+                const handled = this._onArrowTab(event);
+                if (handled === Clutter.EVENT_STOP)
+                    return Clutter.EVENT_STOP;
+            }
+
+            if (!this._isExpanded || !this._autoCollapseEnabled())
                 return Clutter.EVENT_PROPAGATE;
             if (this._isFingerprintAuth || this._isBatteryBanner || this._isVolumeHud)
                 return Clutter.EVENT_PROPAGATE;
@@ -642,6 +652,29 @@ export default class BrowExtension extends Extension {
 
         this._island.connect('scroll-event', onScroll);
         this._hitArea.connect('scroll-event', onScroll);
+    }
+
+    _onArrowTab(event) {
+        if (!this._isExpanded || !this._hitArea?.hover)
+            return Clutter.EVENT_PROPAGATE;
+        if (this._isFingerprintAuth || this._isBatteryBanner || this._isVolumeHud)
+            return Clutter.EVENT_PROPAGATE;
+
+        const key = event.get_key_symbol();
+        let direction = 0;
+        if (key === Clutter.KEY_Left || key === Clutter.KEY_Up)
+            direction = -1;
+        else if (key === Clutter.KEY_Right || key === Clutter.KEY_Down)
+            direction = 1;
+        else
+            return Clutter.EVENT_PROPAGATE;
+
+        const now = GLib.get_monotonic_time() / 1000;
+        if (now - (this._lastTabSwitchMs || 0) < 400)
+            return Clutter.EVENT_STOP;
+
+        this._switchTab(this._adjacentTab(direction));
+        return Clutter.EVENT_STOP;
     }
 
     _allTabs() {
@@ -767,6 +800,7 @@ export default class BrowExtension extends Extension {
 
         const settingsOn = expanded && this._currentTab === 4;
         setSettingsControlsReactive(this, settingsOn);
+        this._syncIslandKeyFocus();
     }
 
     _setupAnimations(initialWidth, initialHeight, topMargin) {
@@ -781,11 +815,13 @@ export default class BrowExtension extends Extension {
             if (this._hitArea.hover) {
                 this._clearHoverLeaveTimeout();
                 this._hoverActive = true;
+                this._syncIslandKeyFocus();
                 if (!this._isExpanded)
                     this._updateIslandView();
             } else {
                 this._scrollAccumulator = 0;
                 this._clearHoverLeaveTimeout();
+                this._releaseIslandKeyFocus();
                 // Expanded: leave immediately so moving back to a window collapses
                 // before the click, and the app receives the interaction.
                 if (this._isExpanded && this._autoCollapseEnabled()) {
@@ -831,9 +867,44 @@ export default class BrowExtension extends Extension {
                 this._hideDismissShade();
             }
             this._setExpandedTabPickable(this._isExpanded);
+            this._syncIslandKeyFocus();
             this._updateIslandView();
             return Clutter.EVENT_STOP;
         });
+    }
+
+    _actorInIsland(actor) {
+        let current = actor;
+        while (current) {
+            if (current === this._hitArea)
+                return true;
+            current = current.get_parent?.();
+        }
+        return false;
+    }
+
+    _syncIslandKeyFocus() {
+        if (!this._hitArea)
+            return;
+        if (!this._isExpanded || !this._hitArea.hover) {
+            this._releaseIslandKeyFocus();
+            return;
+        }
+        this._tookIslandKeyFocus = true;
+        const target = this._currentTab === 2 && this._searchText
+            ? this._searchText
+            : this._hitArea;
+        if (global.stage.get_key_focus() !== target)
+            global.stage.set_key_focus(target);
+    }
+
+    _releaseIslandKeyFocus() {
+        if (!this._tookIslandKeyFocus)
+            return;
+        this._tookIslandKeyFocus = false;
+        const focus = global.stage.get_key_focus();
+        if (!focus || this._actorInIsland(focus))
+            global.stage.set_key_focus(null);
     }
 
     _showExpandedAtTab(startTab) {
@@ -1527,6 +1598,7 @@ export default class BrowExtension extends Extension {
 
     disable() {
         this._clearHoverLeaveTimeout();
+        this._releaseIslandKeyFocus();
 
         if (this._monitorsChangedId) {
             try {
